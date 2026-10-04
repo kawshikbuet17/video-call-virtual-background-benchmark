@@ -78,7 +78,7 @@ This sets up all of them (takes a while; run from the project root):
 Windows (PowerShell):
 
 ```powershell
-foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet") {
+foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm") {
     python -m venv "$m\.venv"
     & "$m\.venv\Scripts\python.exe" -m pip install -r "$m\requirements.txt"
     & "$m\.venv\Scripts\python.exe" "$m\download_model.py"
@@ -88,7 +88,7 @@ foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapip
 Linux / macOS:
 
 ```bash
-for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet; do
+for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm; do
     python3 -m venv "$m/.venv"
     "$m/.venv/bin/python" -m pip install -r "$m/requirements.txt"
     "$m/.venv/bin/python" "$m/download_model.py"
@@ -128,7 +128,7 @@ Status and min hardware are filled in as each model is done. See `PROGRESS.md` f
 | 3 | MediaPipe Selfie Segmentation (landscape) | `mediapipe-selfie/` | Segmentation | No | TBD (40+ FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | Apache-2.0 (see model card) | In progress |
 | 4 | MediaPipe Selfie Multiclass | `mediapipe-multiclass/` | Segmentation | No (slow on CPU) | TBD (about 7 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | Apache-2.0 (see model card) | In progress |
 | 5 | MODNet | `modnet/` | Matting | No (slow on CPU at full size) | TBD (about 5 FPS at 512, about 20 FPS at 256 on a laptop i7 CPU) | Yes (CPU), not tested yet | Apache-2.0 | In progress |
-| 6 | Robust Video Matting (RVM) | `rvm/` | Matting | No (faster with GPU) | TBD | Planned | **GPL-3.0** | Not started |
+| 6 | Robust Video Matting (RVM) | `rvm/` | Matting | No | TBD (about 10 FPS default, 25-29 FPS at ratio 0.4 on a laptop i7 CPU) | Yes (CPU), not tested yet | **GPL-3.0** | In progress |
 | 7 | SINet | `sinet/` | Segmentation | No | TBD | Planned | MIT | Not started |
 | 8 | U²-Net (portrait) | `u2net/` | Segmentation | Recommended (too slow on CPU) | TBD | Planned | Apache-2.0 | Not started |
 | 9 | DeepLabV3 MobileNet (torchvision) | `deeplabv3-mobilenet/` | Segmentation | No | TBD | Planned | BSD-3-Clause | Not started |
@@ -180,6 +180,8 @@ not needed), run each model 2-3 times, and report the typical value.
 | MediaPipe Selfie Multiclass | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 8.3 | 116 | Local | 60 frames |
 | MODNet (ref-size 512) | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 5.6-5.8 | 161-166 | Local | onnxruntime 1.23.2, official ONNX model |
 | MODNet (ref-size 256) | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 19.6-20.5 | 40-43 | Local | Same model, smaller input (less detail) |
+| RVM MobileNetV3 (auto ratio 0.8) | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 9.9-10.1 | 88 | Local | onnxruntime 1.23.2, official fp32 ONNX |
+| RVM MobileNetV3 (ratio 0.4) | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 25.3-29.3 | 25-29 | Local | Same model, smaller first stage |
 
 ### Which model for which machine?
 

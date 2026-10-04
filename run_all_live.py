@@ -25,11 +25,13 @@ MODELS = [
     "mediapipe-selfie",
     "mediapipe-multiclass",   # slow on CPU (about 7 FPS)
     "modnet",
+    "rvm",                    # GPL-3.0 license
 ]
 
 # Extra options for a model's live.py (optional).
 EXTRA_ARGS = {
     "modnet": ["--ref-size", "256"],  # 512 (official) is about 5 FPS on CPU
+    "rvm": ["--downsample-ratio", "0.4"],  # automatic (0.8 at 640x480) is about 10 FPS on CPU
 }
 
 CAMERA = 0           # webcam index
