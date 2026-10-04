@@ -61,9 +61,7 @@ See the model's own README for the exact commands.
 
 - Python 3.10 (each model's `requirements.txt` states the version it was tested with): https://www.python.org/downloads/
 - Docker (optional): https://docs.docker.com/get-started/get-docker/
-- GPU in Docker (optional, NVIDIA only):
-  - Linux: NVIDIA Container Toolkit: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
-  - Windows: Docker Desktop with the WSL2 backend and a recent NVIDIA driver: https://docs.docker.com/desktop/features/gpu/
+- No GPU needed: every model in this project runs and is benchmarked on the CPU.
 
 ## Hardware compatibility
 
@@ -87,7 +85,7 @@ Status and min hardware are filled in as each model is done. See `PROGRESS.md` f
 | 2 | PP-HumanSegV2 Lite (portrait) | `pp-humanseg-v2/` | Segmentation | No | TBD (about 25 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | Apache-2.0 | In progress |
 | 3 | MediaPipe Selfie Segmentation (landscape) | `mediapipe-selfie/` | Segmentation | No | TBD (40+ FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | Apache-2.0 (see model card) | In progress |
 | 4 | MediaPipe Selfie Multiclass | `mediapipe-multiclass/` | Segmentation | No (slow on CPU) | TBD (about 7 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | Apache-2.0 (see model card) | In progress |
-| 5 | MODNet | `modnet/` | Matting | No | TBD | Planned | Apache-2.0 | Not started |
+| 5 | MODNet | `modnet/` | Matting | No (slow on CPU at full size) | TBD (about 5 FPS at 512, about 20 FPS at 256 on a laptop i7 CPU) | Yes (CPU), not tested yet | Apache-2.0 | In progress |
 | 6 | Robust Video Matting (RVM) | `rvm/` | Matting | No (faster with GPU) | TBD | Planned | **GPL-3.0** | Not started |
 | 7 | SINet | `sinet/` | Segmentation | No | TBD | Planned | MIT | Not started |
 | 8 | U²-Net (portrait) | `u2net/` | Segmentation | Recommended (too slow on CPU) | TBD | Planned | Apache-2.0 | Not started |
@@ -138,6 +136,8 @@ not needed), run each model 2-3 times, and report the typical value.
 | MediaPipe Selfie (landscape) | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 41-63 | 6-11 | Local | 150 frames, 2 runs |
 | MediaPipe Selfie Multiclass | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 7.2 | 133 | Local | Windows 11, mediapipe 1.0.1, test clip |
 | MediaPipe Selfie Multiclass | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 8.3 | 116 | Local | 60 frames |
+| MODNet (ref-size 512) | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 5.6-5.8 | 161-166 | Local | onnxruntime 1.23.2, official ONNX model |
+| MODNet (ref-size 256) | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 19.6-20.5 | 40-43 | Local | Same model, smaller input (less detail) |
 
 ### Which model for which machine?
 

@@ -25,6 +25,15 @@ The full original brief is in `prompts.txt`. Progress lives in `PROGRESS.md`.
    Docker issues), explain the problem simply and propose options. Do not
    silently work around it.
 
+## CPU only (user decision, 2026-10-04)
+
+Run and benchmark every model on the CPU. Do not add `--gpu` options,
+`requirements-gpu.txt`, GPU Dockerfiles or `--gpus all` commands, and do not
+download GPU packages (onnxruntime-gpu, CUDA/cuDNN wheels, paddlepaddle-gpu,
+CUDA PyTorch). In each model README the "GPU" section says: "Not provided. This
+project runs every model on the CPU." The "GPU needed" column in README.md is
+information only. This overrides the GPU parts of the Docker rules below.
+
 ## Developer machine (checked 2026-10-04)
 
 - Windows 11 Home (10.0.26200), Intel i7-13620H, 16 GB RAM
