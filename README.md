@@ -15,6 +15,8 @@ video-call-virtual-background-benchmark/
 ├── PROGRESS.md          status of each model and a work log
 ├── CLAUDE.md            project rules and conventions
 ├── system_info.py       prints your hardware details (run this first)
+├── run_all_live.py      runs several models' live.py side by side on one webcam
+├── camera_share.py      shares one webcam between those windows (used by run_all_live.py)
 ├── .gitignore
 ├── .dockerignore        template, copied into each model folder
 ├── assets/
@@ -56,6 +58,46 @@ Then pick a model folder and use one of two ways to run it.
 3. `docker run` with `assets/` and `outputs/` mounted, using `--no-display`.
 
 See the model's own README for the exact commands.
+
+**Run several models at once (live, side by side)**
+
+Open `run_all_live.py` and comment out (`#`) the models you do not want in the
+`MODELS` list. Then, from the project root:
+
+```
+python run_all_live.py
+```
+
+Each selected model opens its own `live.py` window, tiled on the screen, all
+showing your webcam. Each window has its own picker bar. Close a window with `q`;
+Ctrl+C in the terminal closes all of them.
+
+Every window runs in its model's own venv, so set up each model once first.
+This sets up all of them (takes a while; run from the project root):
+
+Windows (PowerShell):
+
+```powershell
+foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet") {
+    python -m venv "$m\.venv"
+    & "$m\.venv\Scripts\python.exe" -m pip install -r "$m\requirements.txt"
+    & "$m\.venv\Scripts\python.exe" "$m\download_model.py"
+}
+```
+
+Linux / macOS:
+
+```bash
+for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet; do
+    python3 -m venv "$m/.venv"
+    "$m/.venv/bin/python" -m pip install -r "$m/requirements.txt"
+    "$m/.venv/bin/python" "$m/download_model.py"
+done
+```
+
+The webcam can only be opened by one program at a time, so `camera_share.py`
+opens it once and shares the frames with all windows. All models share one CPU,
+so each runs slower than alone. Use a single `live.py` or `run.py` for FPS numbers.
 
 ## Prerequisites
 
@@ -160,8 +202,11 @@ To be filled in once we have results.
    `requirements-gpu.txt`.
 4. `Dockerfile`: slim Python base image of the same version, install from
    `requirements.txt`, run `download_model.py` during the build.
-5. Test it locally and in Docker.
-6. Add the model to the Models, Resources and Results tables above, and to `PROGRESS.md`.
+5. Optional `live.py`: copy one from another model. Keep its `--shared-camera`,
+   `--window-pos` and `--window-width` options, and add the folder to `MODELS`
+   in `run_all_live.py`.
+6. Test it locally and in Docker.
+7. Add the model to the Models, Resources and Results tables above, and to `PROGRESS.md`.
 
 ---
 

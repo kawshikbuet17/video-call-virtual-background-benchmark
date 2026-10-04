@@ -30,6 +30,7 @@ Folder names are planned and may change when each model is started.
 | `system_info.py` | Done | Tested on Windows host and in a `python:3.10-slim` container |
 | Hardware compatibility section | In progress | Results columns, Min hardware column and the "Which model for which machine?" placeholder are added. The full requirement text is still needed from the user |
 | Sample video in `assets/samples/` | Not started | No freely licensed clip found yet |
+| `run_all_live.py` + `camera_share.py` (run several live.py at once) | Done | Tested with all 5 models at once on one webcam (Windows) |
 
 ## Log
 
@@ -44,3 +45,4 @@ Folder names are planned and may change when each model is started.
 | 2026-10-04 | Committed PP-HumanSeg V2 (`341429a`). MediaPipe Selfie (landscape): added `mediapipe-selfie/` using the Tasks API `ImageSegmenter` (mediapipe 1.0.1). MediaPipe handles resize and normalization itself. About 4-6 ms inference, more than 100 FPS on the test clip, with a sharp mask. MediaPipe brings `opencv-contrib-python`, so `opencv-python` is not installed. Local image/video/webcam OK. Docker not tested yet (Docker Desktop still hung). |
 | 2026-10-04 | Committed MediaPipe Selfie (`4a614b3`). MediaPipe Selfie Multiclass: added `mediapipe-multiclass/` (same code as `mediapipe-selfie/`, 6-class model; person mask = 1 - background confidence). About 115-135 ms per frame on CPU (the model itself, not the settings). Cleanest mask so far. Local image/video/webcam OK. Docker not tested yet (Docker Desktop still hung). |
 | 2026-10-04 | Committed MediaPipe Multiclass (`c7c5957`). MODNet: added `modnet/` using the official ONNX model and onnxruntime. Preprocessing follows the official `onnx/inference_onnx.py` (RGB, scaled to -1..1, short side 512, sides a multiple of 32). About 165 ms at 512 and about 42 ms at 256 on CPU. Best matte so far. **User decision: CPU only, no GPU runs.** Removed the `--gpu` option and stopped the onnxruntime-gpu download; the rule is recorded in CLAUDE.md. Docker not tested yet (Docker Desktop still hung). |
+| 2026-10-04 | Committed MODNet (`b1648b6`). Added `run_all_live.py` (comment/uncomment the models to run) and `camera_share.py` (one webcam shared through shared memory, because a second process cannot open the camera). Added `--shared-camera`, `--window-pos` and `--window-width` to all 5 `live.py`. Tested: two readers from different venvs each got 30 FPS, and all 5 windows ran tiled at once. |

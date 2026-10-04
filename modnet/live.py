@@ -15,6 +15,7 @@ To add your own background, copy a .jpg/.png into assets/backgrounds/ and restar
 The model code (load, preprocess, inference, postprocess) is reused from run.py.
 """
 import argparse
+import sys
 import time
 
 import cv2
@@ -34,6 +35,10 @@ BLUR_LEVELS = {"Blur light": 4, "Blur strong": 12}
 def parse_args():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--camera", type=int, default=0, help="webcam index (default 0)")
+    p.add_argument("--shared-camera", action="store_true",
+                   help="read frames from camera_share.py instead of opening the webcam (used by run_all_live.py)")
+    p.add_argument("--window-pos", type=int, nargs=2, metavar=("X", "Y"), help="place the window at X, Y on screen")
+    p.add_argument("--window-width", type=int, help="initial window width in pixels (height follows)")
     p.add_argument("--ref-size", type=int, default=model.REF_SIZE, help="model input short side (smaller = faster)")
     return p.parse_args()
 
@@ -108,13 +113,23 @@ def main():
     print("Loading model...")
     predictor = model.load_model()
 
-    cap = cv2.VideoCapture(args.camera)
+    if args.shared_camera:
+        # The webcam is opened once by camera_share.py (in the project root),
+        # so several live.py windows can show it at the same time.
+        sys.path.insert(0, str(model.HERE.parent))
+        from camera_share import SharedCameraReader
+        cap = SharedCameraReader()
+    else:
+        cap = cv2.VideoCapture(args.camera)
     if not cap.isOpened():
         raise SystemExit(f"Could not open webcam {args.camera}. Close other apps using the camera, or try --camera 1.")
 
     # Mouse clicks: remember where the user clicked; the main loop decides which tile it was.
     clicks = []
     cv2.namedWindow(WINDOW, cv2.WINDOW_NORMAL)  # resizable: drag the corner or maximize it
+    if args.window_pos:
+        cv2.moveWindow(WINDOW, *args.window_pos)
+    window_sized = False
     cv2.setMouseCallback(WINDOW, lambda event, x, y, flags, param:
                          clicks.append((x, y)) if event == cv2.EVENT_LBUTTONDOWN else None)
 
@@ -147,7 +162,11 @@ def main():
         cv2.rectangle(shown_bar, (selected * tile_w + 1, 1), ((selected + 1) * tile_w - 2, BAR_HEIGHT - 2), (0, 220, 255), 3)
         top = result.copy()
         draw_status(top, effects[selected][0], fps, infer_ms)
-        cv2.imshow(WINDOW, np.vstack([top, shown_bar]))
+        view = np.vstack([top, shown_bar])
+        if args.window_width and not window_sized:  # keep the aspect ratio of the view
+            cv2.resizeWindow(WINDOW, args.window_width, int(args.window_width * view.shape[0] / view.shape[1]))
+            window_sized = True
+        cv2.imshow(WINDOW, view)
 
         # Handle mouse clicks on the bar.
         for x, y in clicks:

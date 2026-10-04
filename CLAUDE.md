@@ -61,6 +61,16 @@ yet. Ask for it and add it here. Agreed so far:
 - `README.md` has a "Which model for which machine?" guide (low-end / mid-range
   / high-end). It is a placeholder until there are results.
 
+## Running several models at once
+
+`run_all_live.py` (root, standard library only) starts `camera_share.py` with the
+first selected model's venv Python, then each model's `live.py --shared-camera
+--window-pos X Y --window-width W`. `camera_share.py` opens the webcam once and
+writes frames into shared memory (`vbg_camera`), because a webcam can be opened
+by only one process at a time (tested: a second process gets no frames).
+Every new model's `live.py` must support these three options, and the model must
+be added (commented or not) to `MODELS` in `run_all_live.py`.
+
 ## Folder conventions
 
 ```
