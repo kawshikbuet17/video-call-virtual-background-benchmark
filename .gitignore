@@ -1,0 +1,32 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Downloaded model weights (never commit these)
+models/
+*.onnx
+*.pdparams
+*.pdmodel
+*.pdiparams
+*.pdiparams.info
+*.pth
+*.pt
+*.tflite
+*.task
+*.ckpt
+*.h5
+*.pb
+*.safetensors
+
+# Output files
+outputs/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS junk files
+.DS_Store
+Thumbs.db
+desktop.ini

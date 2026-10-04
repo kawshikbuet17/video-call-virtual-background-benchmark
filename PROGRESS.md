@@ -1,0 +1,39 @@
+# Progress
+
+Status values: Not started / In progress / Done / Skipped (+ reason).
+
+## Models
+
+| # | Model | Folder | Status | Local run tested | Docker run tested | Notes |
+|---|-------|--------|--------|------------------|-------------------|-------|
+| 1 | PP-HumanSeg v1 (portrait Lite) | `pp-humanseg-v1/` | Not started | - | - | |
+| 2 | PP-HumanSegV2 Lite (portrait) | `pp-humanseg-v2/` | Not started | - | - | |
+| 3 | MediaPipe Selfie Segmentation (landscape) | `mediapipe-selfie/` | Not started | - | - | |
+| 4 | MediaPipe Selfie Multiclass | `mediapipe-multiclass/` | Not started | - | - | |
+| 5 | MODNet | `modnet/` | Not started | - | - | |
+| 6 | Robust Video Matting (RVM) | `rvm/` | Not started | - | - | GPL-3.0 |
+| 7 | SINet | `sinet/` | Not started | - | - | |
+| 8 | U²-Net (portrait) | `u2net/` | Not started | - | - | Too slow for real time on CPU |
+| 9 | DeepLabV3 MobileNet (torchvision) | `deeplabv3-mobilenet/` | Not started | - | - | |
+| 10 | TF.js BodyPix | `bodypix/` | Not started | - | - | May need Node.js/browser; discuss first |
+| 11 | YOLO segmentation (Ultralytics) | `yolo-seg/` | Not started | - | - | AGPL-3.0 |
+| 12 | Apple Vision person segmentation | `apple-vision/` | Not started | - | - | macOS only, no Docker. Dev machine is Windows, so likely Skipped |
+| 13 | NVIDIA Maxine | `nvidia-maxine/` | Not started | - | - | Needs RTX GPU (dev machine has RTX 4050); discuss first |
+
+Folder names are planned and may change when each model is started.
+
+## Project-level tasks
+
+| Task | Status | Notes |
+|------|--------|-------|
+| Step 0: project skeleton | Done | Waiting for commit approval |
+| `system_info.py` | Done | Tested on Windows host and in a `python:3.10-slim` container |
+| Hardware compatibility section | In progress | Results columns, Min hardware column and the "Which model for which machine?" placeholder are added. The full requirement text is still needed from the user |
+| Sample video in `assets/samples/` | Not started | No freely licensed clip found yet |
+
+## Log
+
+| Date | What was done |
+|------|---------------|
+| 2026-10-04 | Step 0: checked the system (Windows 11, Python 3.10.0, Docker 26.1.1 with working `--gpus all`, RTX 4050, webcam). Created `CLAUDE.md`, `PROGRESS.md`, `README.md`, `.gitignore`, `.dockerignore`, `assets/` (2 generated backgrounds, 1 public-domain sample image). |
+| 2026-10-04 | Added the hardware compatibility work: `system_info.py`, the Results table columns (device, RAM, resolution, local/Docker), the Min hardware column, and the "Which model for which machine?" placeholder. The full section text is still to come. |
