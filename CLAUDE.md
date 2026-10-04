@@ -54,8 +54,9 @@ yet. Ask for it and add it here. Agreed so far:
 - `system_info.py` (root, standard library only) prints OS, Python, CPU, RAM,
   GPU and Docker version. Run it on the host. Inside Docker on Windows/macOS it
   reports the VM's RAM and no GPU.
-- Every Results row in `README.md` records: Model | Device (CPU/GPU name) | RAM |
-  Resolution | Avg FPS | Avg inference (ms) | Local/Docker | Notes.
+- Every Results row in `README.md` records: Model | Model size | Device (CPU/GPU name) |
+  RAM | Resolution | Avg FPS | Avg inference (ms) | Local/Docker | Notes.
+  Model size = size of the downloaded file(s) in `models/` (Paddle: graph + weights).
 - The models table in `README.md` has a "Min hardware" column. Fill it from real
   test results only; leave `TBD` until then.
 - `README.md` has a "Which model for which machine?" guide (low-end / mid-range
@@ -96,7 +97,7 @@ Each model folder must work on its own with its own `.venv`, because models
 have conflicting dependencies (Paddle, PyTorch, MediaPipe, TensorFlow, ...).
 
 Adding a model: create the folder with the files above, then update the
-models table (including Min hardware), resources and results in `README.md`,
+models table (including Model size and Min hardware), resources and results in `README.md`,
 and the row in `PROGRESS.md`.
 
 ### Model README sections
@@ -176,6 +177,11 @@ fixes · License note (warn clearly for GPL/AGPL or other restrictive licenses).
   (never both). Use the Tasks API (`mediapipe.tasks.python.vision`), not the
   deprecated `mp.solutions`.
 - The MediaPipe docs moved from ai.google.dev to developers.google.com/edge/mediapipe/.
+
+- PyTorch, CPU only: put plain `torch==X` in requirements.txt (the PyPI wheel is
+  CPU-only on Windows/macOS). On Linux/Docker, install with
+  `--extra-index-url https://download.pytorch.org/whl/cpu` (a pip dry run showed it
+  picks `X+cpu`). download.pytorch.org stalled once from this machine; PyPI was fast.
 
 ## Coding style
 

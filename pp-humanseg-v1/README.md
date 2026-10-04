@@ -71,7 +71,7 @@ pip install -r requirements.txt
 python download_model.py
 ```
 
-This saves the model into `models/` (about 2 MB).
+This downloads a 0.6 MB zip and unpacks the model into `models/` (2.3 MB: graph 1.7 MB + weights 0.56 MB).
 
 ### 3. Run
 
@@ -164,8 +164,7 @@ Linux machine with a webcam was available.
 
 ### GPU
 
-Not provided. The model is already small and fast on CPU, and the GPU build of
-PaddlePaddle is a much larger, CUDA-specific install.
+Not provided. This project runs every model on the CPU.
 
 ## Controls
 

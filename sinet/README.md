@@ -1,18 +1,19 @@
-# MediaPipe Selfie Segmentation (landscape)
+# SINet (portrait segmentation)
 
 ## What this model is
 
-Google's selfie segmentation model, used in Google Meet-style virtual backgrounds.
-The landscape version takes a 256x144 input and is tiny (about 250 KB). It runs
-through MediaPipe's Image Segmenter (Tasks API) and outputs a person probability
-for every pixel. Very fast on CPU.
+SINet ("Extreme Lightweight Portrait Segmentation Networks", WACV 2020, Clova AI)
+is a very small portrait segmentation network: about 0.1 M parameters, a 445 KB
+weight file, and a 224x224 input. It was trained on the EG1800 portrait dataset.
+We run the official PyTorch weights on the CPU, using the official network code
+(copied into `sinet_model.py`).
 
 ## Requirements
 
 - Python 3.10 (tested with 3.10.0 on Windows 11)
 - Windows, Linux or macOS (only Windows and Linux/Docker were tested)
-- No GPU needed. Inference is about 4-6 ms per frame on an Intel i7-13620H.
-- About 400 MB of disk space for the virtual environment
+- No GPU needed. Inference is about 35 ms per frame on an Intel i7-13620H.
+- About 600 MB of disk space for the virtual environment (PyTorch)
 
 ## Quick start
 
@@ -21,7 +22,7 @@ From the project root, the first time:
 Windows (PowerShell):
 
 ```powershell
-cd mediapipe-selfie
+cd sinet
 python -m venv .venv
 .venv\Scripts\python.exe -m pip install -r requirements.txt
 .venv\Scripts\python.exe download_model.py
@@ -31,9 +32,9 @@ python -m venv .venv
 Linux / macOS:
 
 ```bash
-cd mediapipe-selfie
+cd sinet
 python3 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
 .venv/bin/python download_model.py
 .venv/bin/python live.py
 ```
@@ -43,7 +44,7 @@ the 4-panel benchmark view. Details for each step are below.
 
 ## Option A: Run locally
 
-Run all commands from this folder (`mediapipe-selfie/`).
+Run all commands from this folder (`sinet/`).
 
 ### 1. Create a virtual environment and install packages
 
@@ -62,7 +63,7 @@ Linux / macOS:
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-pip install -r requirements.txt
+pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
 ```
 
 ### 2. Download the model
@@ -71,7 +72,12 @@ pip install -r requirements.txt
 python download_model.py
 ```
 
-This saves the model into `models/` (about 250 KB).
+This downloads the official weights `SINet.pth` from the SINet GitHub repo into
+`models/` (about 445 KB) and checks the checksum.
+
+Why the extra option on Linux: the normal Linux PyTorch from PyPI includes CUDA (GPU)
+and is several GB. The extra index gives the CPU-only build. Windows and macOS
+do not need it.
 
 ### 3. Run
 
@@ -109,7 +115,7 @@ Useful options for `run.py`:
 
 ## Option B: Run with Docker
 
-Run all commands from this folder (`mediapipe-selfie/`). The model is downloaded
+Run all commands from this folder (`sinet/`). The model is downloaded
 during the build.
 
 TODO: the Docker image has not been built or tested yet. Docker Desktop stopped
@@ -118,7 +124,7 @@ responding during this work.
 ### Build
 
 ```
-docker build -t vbg-mediapipe-selfie .
+docker build -t vbg-sinet .
 ```
 
 ### Run on an image or video (all operating systems)
@@ -129,15 +135,15 @@ can use any file in `assets/samples/`.
 Windows (PowerShell):
 
 ```powershell
-docker run --rm -v "${PWD}\..\assets:/app/assets" -v "${PWD}\outputs:/app/mediapipe-selfie/outputs" vbg-mediapipe-selfie
-docker run --rm -v "${PWD}\..\assets:/app/assets" -v "${PWD}\outputs:/app/mediapipe-selfie/outputs" vbg-mediapipe-selfie --no-display --video ../assets/samples/my_clip.mp4
+docker run --rm -v "${PWD}\..\assets:/app/assets" -v "${PWD}\outputs:/app/sinet/outputs" vbg-sinet
+docker run --rm -v "${PWD}\..\assets:/app/assets" -v "${PWD}\outputs:/app/sinet/outputs" vbg-sinet --no-display --video ../assets/samples/my_clip.mp4
 ```
 
 Linux / macOS:
 
 ```bash
-docker run --rm -v "$(pwd)/../assets:/app/assets" -v "$(pwd)/outputs:/app/mediapipe-selfie/outputs" vbg-mediapipe-selfie
-docker run --rm -v "$(pwd)/../assets:/app/assets" -v "$(pwd)/outputs:/app/mediapipe-selfie/outputs" vbg-mediapipe-selfie --no-display --video ../assets/samples/my_clip.mp4
+docker run --rm -v "$(pwd)/../assets:/app/assets" -v "$(pwd)/outputs:/app/sinet/outputs" vbg-sinet
+docker run --rm -v "$(pwd)/../assets:/app/assets" -v "$(pwd)/outputs:/app/sinet/outputs" vbg-sinet --no-display --video ../assets/samples/my_clip.mp4
 ```
 
 The first command (no arguments) processes `assets/samples/person_portrait.jpg`.
@@ -152,7 +158,7 @@ On Linux with an X11 desktop:
 
 ```bash
 xhost +local:docker
-docker run --rm -it --device /dev/video0 -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v "$(pwd)/../assets:/app/assets" -v "$(pwd)/outputs:/app/mediapipe-selfie/outputs" vbg-mediapipe-selfie --camera 0
+docker run --rm -it --device /dev/video0 -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v "$(pwd)/../assets:/app/assets" -v "$(pwd)/outputs:/app/sinet/outputs" vbg-sinet --camera 0
 xhost -local:docker
 ```
 
@@ -190,10 +196,10 @@ A window with four panels side by side: **Original | Mask | Blur | Replace**.
 The mask is white where the model sees a person. The top bar shows FPS (the
 whole pipeline) and the model's inference time in ms.
 
-Measured on an Intel i7-13620H (CPU only), 640x480: about 4-6 ms inference and
-40-110 FPS for the whole pipeline (the webcam itself usually limits you to 30 FPS).
-The outline of the person is sharp. Small patches of a busy background (for
-example a flag) can still leak in.
+Measured on an Intel i7-13620H (CPU only), 640x480: about 35-37 ms inference,
+about 23-24 FPS. The mask is clean on the body; edges are a little soft because
+the model works at 224x224. Busy backgrounds (for example a flag) leak in only
+faintly.
 
 ## Common problems and fixes
 
@@ -201,20 +207,20 @@ example a flag) can still leak in.
 |---------|-----|
 | `Model not found ... Run first: python download_model.py` | Run `python download_model.py` from this folder. |
 | `Could not open webcam 0` | Close other apps using the camera (Zoom, Teams, browser). Try `--camera 1`. On Windows, check Settings > Privacy > Camera. |
-| `INFO: Created TensorFlow Lite XNNPACK delegate` and `W0000 ... inference_feedback_manager` lines | Harmless log messages from MediaPipe. |
-| Two OpenCV packages installed (`opencv-python` and `opencv-contrib-python`), strange `cv2` errors | Use a fresh venv with only `requirements.txt`. MediaPipe brings `opencv-contrib-python`; do not install `opencv-python` as well. |
+| `Dnc_SINet` is printed when the model loads | Harmless. The official network code prints it. |
+| Linux: pip downloads several GB (`nvidia-...` packages) | You forgot `--extra-index-url https://download.pytorch.org/whl/cpu`. Delete `.venv` and install again with it. |
 | PowerShell says running scripts is disabled when activating the venv | Run `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once, or call `.venv\Scripts\python.exe run.py` directly without activating. |
-| Docker: `Could not read background image` | The `assets` folder is not mounted. Run the command from inside `mediapipe-selfie/` exactly as shown. |
+| Docker: `Could not read background image` | The `assets` folder is not mounted. Run the command from inside `sinet/` exactly as shown. |
 | Docker: `libGL.so.1` not found | You changed the Dockerfile base image. Keep the `apt-get install` line. |
 | Docker on Linux: files in `outputs/` are owned by root | Add `--user "$(id -u):$(id -g)"` to the `docker run` command. |
 | Docker on Linux: `could not connect to display` | Run `xhost +local:docker` first, and check that `echo $DISPLAY` is not empty. |
 
 ## License note
 
-MediaPipe (code) is licensed under Apache-2.0. The selfie segmentation model
-comes with a model card that describes its intended use and limits; read it
-before using the model in a product.
+MIT (official repo `clovaai/ext_portrait_segmentation`, Copyright (c) 2019-present
+NAVER Corp.). Commercial use is allowed. `sinet_model.py` is a copy of the official
+network code; the MIT license requires keeping the copyright and license text,
+which is in `LICENSE-SINet` in this folder.
 
-- Model page: https://developers.google.com/edge/mediapipe/solutions/vision/image_segmenter
-- Model card: https://storage.googleapis.com/mediapipe-assets/Model%20Card%20MediaPipe%20Selfie%20Segmentation.pdf
-- Repo: https://github.com/google-ai-edge/mediapipe
+- Repo: https://github.com/clovaai/ext_portrait_segmentation
+- Paper: https://arxiv.org/abs/1911.09099

@@ -26,6 +26,7 @@ MODELS = [
     "mediapipe-multiclass",   # slow on CPU (about 7 FPS)
     "modnet",
     "rvm",                    # GPL-3.0 license
+    "sinet",
 ]
 
 # Extra options for a model's live.py (optional).
@@ -35,8 +36,9 @@ EXTRA_ARGS = {
 }
 
 CAMERA = 0           # webcam index
-COLUMNS = 3          # windows per row
-WINDOW_WIDTH = 400   # pixels; the height follows the video's aspect ratio (400 fits 2 rows on a 1080p laptop screen)
+COLUMNS = 4          # windows per row
+WINDOW_WIDTH = 370   # pixels; the height follows the video's aspect ratio
+                     # (4 x 370 fits 2 rows = 8 windows on a 1080p laptop screen at 125% scaling)
 # ---------------------------------------------------------------- end of settings
 
 ROOT = Path(__file__).resolve().parent
