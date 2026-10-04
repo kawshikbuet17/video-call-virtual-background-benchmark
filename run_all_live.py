@@ -31,6 +31,7 @@ MODELS = [
     "deeplabv3-mobilenet",    # general 21-class model, soft edges
     "bodypix",                # deprecated by Google, weakest mask
     "fast-person-segmentation",
+    "ncnn-portrait-segmentation",
 ]
 
 # Extra options for a model's live.py (optional).

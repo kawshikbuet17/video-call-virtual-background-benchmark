@@ -78,7 +78,7 @@ This sets up all of them (takes a while; run from the project root):
 Windows (PowerShell):
 
 ```powershell
-foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm", "sinet", "u2net", "deeplabv3-mobilenet", "bodypix", "fast-person-segmentation") {
+foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm", "sinet", "u2net", "deeplabv3-mobilenet", "bodypix", "fast-person-segmentation", "ncnn-portrait-segmentation") {
     python -m venv "$m\.venv"
     & "$m\.venv\Scripts\python.exe" -m pip install -r "$m\requirements.txt"
     & "$m\.venv\Scripts\python.exe" "$m\download_model.py"
@@ -88,7 +88,7 @@ foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapip
 Linux / macOS:
 
 ```bash
-for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm sinet u2net deeplabv3-mobilenet bodypix fast-person-segmentation; do
+for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm sinet u2net deeplabv3-mobilenet bodypix fast-person-segmentation ncnn-portrait-segmentation; do
     python3 -m venv "$m/.venv"
     # The extra index gives CPU-only PyTorch on Linux (sinet, u2net, deeplabv3-mobilenet); other packages still come from PyPI.
     "$m/.venv/bin/python" -m pip install -r "$m/requirements.txt" --extra-index-url https://download.pytorch.org/whl/cpu
@@ -137,9 +137,10 @@ Status, model size and min hardware are filled in as each model is done. Model s
 | 10 | TF.js BodyPix (run in Python via tf-bodypix) | `bodypix/` | Segmentation | 5.2 MB | No | TBD (about 11 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | Apache-2.0 (model), MIT (tf-bodypix) | In progress |
 | 11 | Deepixel Upperbody-Segmentation | - | Segmentation | - | No (CPU-only SDK) | TBD | TBD | Proprietary (license from Deepixel) | Blocked: SDK not publicly available |
 | 12 | fast_person_segmentation (Mobile-UNet) | `fast-person-segmentation/` | Segmentation | 14.7 MB | No | TBD (about 23-44 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | No license (repo); original model MIT | In progress |
-| 13 | YOLO segmentation (Ultralytics) | `yolo-seg/` | Segmentation | TBD | No (faster with GPU) | TBD | Planned | **AGPL-3.0** | Not started |
-| 14 | Apple Vision person segmentation | `apple-vision/` | Segmentation | TBD | No | Mac only | No (macOS only) | Apple OS API | Not started |
-| 15 | NVIDIA Maxine | `nvidia-maxine/` | Segmentation | TBD | Yes (NVIDIA RTX) | NVIDIA RTX GPU | TBD | NVIDIA SDK license | Not started |
+| 13 | ncnn-portrait-segmentation (ERDNet) | `ncnn-portrait-segmentation/` | Segmentation | 3.3 MB | No | TBD (about 40-47 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | MIT (code); model origin has no license | In progress |
+| 14 | YOLO segmentation (Ultralytics) | `yolo-seg/` | Segmentation | TBD | No (faster with GPU) | TBD | Planned | **AGPL-3.0** | Not started |
+| 15 | Apple Vision person segmentation | `apple-vision/` | Segmentation | TBD | No | Mac only | No (macOS only) | Apple OS API | Not started |
+| 16 | NVIDIA Maxine | `nvidia-maxine/` | Segmentation | TBD | Yes (NVIDIA RTX) | NVIDIA RTX GPU | TBD | NVIDIA SDK license | Not started |
 
 GPL-3.0 and AGPL-3.0 are restrictive for closed-source commercial use. Read the
 license before using those models in a product.
@@ -158,6 +159,7 @@ license before using those models in a product.
 | TF.js BodyPix | TODO | [tfjs-models/body-pix](https://github.com/tensorflow/tfjs-models/tree/master/body-pix) (deprecated), [de-code/python-tf-bodypix](https://github.com/de-code/python-tf-bodypix) (Python wrapper used here) |
 | Deepixel Upperbody-Segmentation | - | [deepixel-inc/Upperbody-Segmentation](https://github.com/deepixel-inc/Upperbody-Segmentation) (README and API docs only), [evaluation script](https://github.com/deepixel-inc/Upperbody-Evaluation) |
 | fast_person_segmentation | - | [SamSamhuns/fast_person_segmentation](https://github.com/SamSamhuns/fast_person_segmentation) (model used here), [anilsathyan7/Portrait-Segmentation](https://github.com/anilsathyan7/Portrait-Segmentation) (original, MIT) |
+| ncnn-portrait-segmentation (ERDNet) | - | [leeys888/ncnn-portrait-segmentation](https://github.com/leeys888/ncnn-portrait-segmentation) (model used here), [lizhengwei1992/Fast_Portrait_Segmentation](https://github.com/lizhengwei1992/Fast_Portrait_Segmentation) (model origin), [Tencent/ncnn](https://github.com/Tencent/ncnn) |
 | YOLO segmentation | TODO | [ultralytics/ultralytics](https://github.com/ultralytics/ultralytics), [Segmentation docs](https://docs.ultralytics.com/tasks/segment/) |
 | Apple Vision | - | [VNGeneratePersonSegmentationRequest](https://developer.apple.com/documentation/vision/vngeneratepersonsegmentationrequest) |
 | NVIDIA Maxine | - | [NVIDIA Maxine](https://developer.nvidia.com/maxine) |
@@ -196,6 +198,8 @@ not needed), run each model 2-3 times, and report the typical value.
 | BodyPix MobileNet 0.75 (stride 16) | 5.2 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 10.5-11.1 | 63-66 | Local | TensorFlow 2.11 + tf-bodypix 0.4.2, official TF.js model |
 | fast_person_segmentation (Mobile-UNet e260) | 14.7 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 43.7 | 14.2 | Local | OpenCV 4.11 DNN (no TensorFlow) |
 | fast_person_segmentation (Mobile-UNet e260) | 14.7 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 21.7-23.4 | 26.6-27.9 | Local | Webcam reading uses CPU too; 150 frames, 3 runs |
+| ncnn ERDNet | 3.3 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 47.1 | 15.2 | Local | ncnn 1.0.20260526 Python package, 4 threads |
+| ncnn ERDNet | 3.3 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 38.1-42.9 | 17.1-18.9 | Local | 150 frames, 2 runs |
 
 ### Which model for which machine?
 
