@@ -28,18 +28,20 @@ MODELS = [
     "rvm",                    # GPL-3.0 license
     "sinet",
     "u2net",                  # very slow on CPU (about 2 FPS) and slows the others: comment out if needed
+    "deeplabv3-mobilenet",    # general 21-class model, soft edges
 ]
 
 # Extra options for a model's live.py (optional).
 EXTRA_ARGS = {
     "modnet": ["--ref-size", "256"],  # 512 (official) is about 5 FPS on CPU
     "rvm": ["--downsample-ratio", "0.4"],  # automatic (0.8 at 640x480) is about 10 FPS on CPU
+    "deeplabv3-mobilenet": ["--input-size", "256"],  # 520 (official) is about 4 FPS on CPU
 }
 
 CAMERA = 0           # webcam index
-COLUMNS = 4          # windows per row
-WINDOW_WIDTH = 370   # pixels; the height follows the video's aspect ratio
-                     # (4 x 370 fits 2 rows = 8 windows on a 1080p laptop screen at 125% scaling)
+COLUMNS = 5          # windows per row
+WINDOW_WIDTH = 290   # pixels; the height follows the video's aspect ratio
+                     # (5 x 290 fits 2 rows = 10 windows on a 1080p laptop screen at 125% scaling)
 # ---------------------------------------------------------------- end of settings
 
 ROOT = Path(__file__).resolve().parent

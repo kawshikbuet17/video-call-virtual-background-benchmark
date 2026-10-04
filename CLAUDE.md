@@ -74,7 +74,7 @@ be added (commented or not) to `MODELS` in `run_all_live.py`.
 
 Testing a new model in run-all (user rule, 2026-10-04): do NOT launch all models
 (it loads the CPU too much). Only check that the new model's window position fits
-the screen (1536x816 usable here; 4 columns x 370 px), for example by computing the
+the screen (1536x816 usable here; 5 columns x 290 px, room for 10 windows), for example by computing the
 positions or by starting just the new model's `live.py --window-pos X Y
 --window-width W`.
 

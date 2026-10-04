@@ -78,7 +78,7 @@ This sets up all of them (takes a while; run from the project root):
 Windows (PowerShell):
 
 ```powershell
-foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm", "sinet", "u2net") {
+foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm", "sinet", "u2net", "deeplabv3-mobilenet") {
     python -m venv "$m\.venv"
     & "$m\.venv\Scripts\python.exe" -m pip install -r "$m\requirements.txt"
     & "$m\.venv\Scripts\python.exe" "$m\download_model.py"
@@ -88,9 +88,9 @@ foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapip
 Linux / macOS:
 
 ```bash
-for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm sinet u2net; do
+for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm sinet u2net deeplabv3-mobilenet; do
     python3 -m venv "$m/.venv"
-    # The extra index gives CPU-only PyTorch on Linux (used by sinet); other packages still come from PyPI.
+    # The extra index gives CPU-only PyTorch on Linux (sinet, u2net, deeplabv3-mobilenet); other packages still come from PyPI.
     "$m/.venv/bin/python" -m pip install -r "$m/requirements.txt" --extra-index-url https://download.pytorch.org/whl/cpu
     "$m/.venv/bin/python" "$m/download_model.py"
 done
@@ -133,7 +133,7 @@ Status, model size and min hardware are filled in as each model is done. Model s
 | 6 | Robust Video Matting (RVM) | `rvm/` | Matting | 15.0 MB | No | TBD (about 10 FPS default, 25-29 FPS at ratio 0.4 on a laptop i7 CPU) | Yes (CPU), not tested yet | **GPL-3.0** | In progress |
 | 7 | SINet | `sinet/` | Segmentation | 0.44 MB | No | TBD (about 23 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | MIT | In progress |
 | 8 | U²-Net (human segmentation) | `u2net/` | Segmentation | 176.3 MB | No (very slow on CPU) | TBD (about 2 FPS on a laptop i7 CPU: not real time) | Yes (CPU), not tested yet | Apache-2.0 | In progress |
-| 9 | DeepLabV3 MobileNet (torchvision) | `deeplabv3-mobilenet/` | Segmentation | TBD | No | TBD | Planned | BSD-3-Clause | Not started |
+| 9 | DeepLabV3 MobileNet (torchvision) | `deeplabv3-mobilenet/` | Segmentation | 44.4 MB | No (slow on CPU at full size) | TBD (about 4 FPS at 520, about 13 FPS at 256 on a laptop i7 CPU) | Yes (CPU), not tested yet | BSD-3-Clause | In progress |
 | 10 | TF.js BodyPix | `bodypix/` | Segmentation | TBD | No | TBD | TBD (may need Node.js/browser) | Apache-2.0 | Not started |
 | 11 | YOLO segmentation (Ultralytics) | `yolo-seg/` | Segmentation | TBD | No (faster with GPU) | TBD | Planned | **AGPL-3.0** | Not started |
 | 12 | Apple Vision person segmentation | `apple-vision/` | Segmentation | TBD | No | Mac only | No (macOS only) | Apple OS API | Not started |
@@ -187,6 +187,8 @@ not needed), run each model 2-3 times, and report the typical value.
 | RVM MobileNetV3 (ratio 0.4) | 15.0 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 25.3-29.3 | 25-29 | Local | Same model, smaller first stage |
 | SINet | 0.44 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 22.7-24.3 | 35-37 | Local | PyTorch 2.14.1 (CPU), official weights |
 | U²-Net (human seg) | 176.3 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 1.9 | 518-523 | Local | PyTorch 2.14.1 (CPU), official weights; 30 frames |
+| DeepLabV3 MobileNetV3 (input 520) | 44.4 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 4.3 | 162-176 | Local | torch 2.14.1 + torchvision 0.29.1 (CPU), official weights |
+| DeepLabV3 MobileNetV3 (input 256) | 44.4 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 13.4-13.9 | 54-55 | Local | Same model, smaller input |
 
 ### Which model for which machine?
 
