@@ -86,7 +86,7 @@ Status and min hardware are filled in as each model is done. See `PROGRESS.md` f
 | 1 | PP-HumanSeg v1 (portrait Lite) | `pp-humanseg-v1/` | Segmentation | No | TBD (about 20 FPS on a laptop i7 CPU) | Yes (CPU) | Apache-2.0 | Done |
 | 2 | PP-HumanSegV2 Lite (portrait) | `pp-humanseg-v2/` | Segmentation | No | TBD (about 25 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | Apache-2.0 | In progress |
 | 3 | MediaPipe Selfie Segmentation (landscape) | `mediapipe-selfie/` | Segmentation | No | TBD (40+ FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | Apache-2.0 (see model card) | In progress |
-| 4 | MediaPipe Selfie Multiclass | `mediapipe-multiclass/` | Segmentation | No | TBD | Planned | Apache-2.0 | Not started |
+| 4 | MediaPipe Selfie Multiclass | `mediapipe-multiclass/` | Segmentation | No (slow on CPU) | TBD (about 7 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | Apache-2.0 (see model card) | In progress |
 | 5 | MODNet | `modnet/` | Matting | No | TBD | Planned | Apache-2.0 | Not started |
 | 6 | Robust Video Matting (RVM) | `rvm/` | Matting | No (faster with GPU) | TBD | Planned | **GPL-3.0** | Not started |
 | 7 | SINet | `sinet/` | Segmentation | No | TBD | Planned | MIT | Not started |
@@ -136,6 +136,8 @@ not needed), run each model 2-3 times, and report the typical value.
 | PP-HumanSeg v1 | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 22-23 | 37-39 | Local | Re-measured the same session for comparison with V2 |
 | MediaPipe Selfie (landscape) | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 110 | 3.6 | Local | Windows 11, mediapipe 1.0.1, test clip, 2 runs |
 | MediaPipe Selfie (landscape) | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 41-63 | 6-11 | Local | 150 frames, 2 runs |
+| MediaPipe Selfie Multiclass | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 7.2 | 133 | Local | Windows 11, mediapipe 1.0.1, test clip |
+| MediaPipe Selfie Multiclass | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 8.3 | 116 | Local | 60 frames |
 
 ### Which model for which machine?
 
