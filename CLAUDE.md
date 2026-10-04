@@ -189,6 +189,12 @@ fixes · License note (warn clearly for GPL/AGPL or other restrictive licenses).
   `--extra-index-url https://download.pytorch.org/whl/cpu` (a pip dry run showed it
   picks `X+cpu`). download.pytorch.org stalled once from this machine; PyPI was fast.
 
+- TFLite models: OpenCV's TFLite reader misses some layers (for example
+  TRANSPOSE_CONV); use LiteRT (`ai-edge-litert`, has Windows wheels) instead of
+  full TensorFlow.
+- Webcam runs on this laptop are often 2-3x slower in inference than video-file runs
+  (reading the camera uses a lot of CPU). Report video and webcam rows separately.
+
 ## Coding style
 
 - Simple, readable Python. Minimal dependencies. Plain functions over classes.

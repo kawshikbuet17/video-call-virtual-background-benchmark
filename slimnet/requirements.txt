@@ -1,0 +1,9 @@
+# Tested with Python 3.10 (local: 3.10.0 on Windows 11)
+# CPU only. LiteRT (formerly "TensorFlow Lite runtime") runs .tflite models without
+# the full TensorFlow package. OpenCV's own TFLite reader cannot run SlimNet
+# (it does not support the TRANSPOSE_CONV layer).
+ai-edge-litert==2.2.0
+numpy==2.2.6
+# Full OpenCV (with window support) for local runs. The Docker image uses the same
+# package so that the Linux webcam + display command works there too.
+opencv-python==5.0.0.93

@@ -33,6 +33,7 @@ MODELS = [
     "fast-person-segmentation",
     "ncnn-portrait-segmentation",
     "fast-portrait-segmentation",  # same model as ncnn-portrait-segmentation, in PyTorch
+    "slimnet",
 ]
 
 # Extra options for a model's live.py (optional).
