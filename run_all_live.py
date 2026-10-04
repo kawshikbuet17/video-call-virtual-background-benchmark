@@ -30,6 +30,7 @@ MODELS = [
     "u2net",                  # very slow on CPU (about 2 FPS) and slows the others: comment out if needed
     "deeplabv3-mobilenet",    # general 21-class model, soft edges
     "bodypix",                # deprecated by Google, weakest mask
+    "fast-person-segmentation",
 ]
 
 # Extra options for a model's live.py (optional).
@@ -40,9 +41,9 @@ EXTRA_ARGS = {
 }
 
 CAMERA = 0           # webcam index
-COLUMNS = 5          # windows per row
-WINDOW_WIDTH = 290   # pixels; the height follows the video's aspect ratio
-                     # (5 x 290 fits 2 rows = 10 windows on a 1080p laptop screen at 125% scaling)
+COLUMNS = 6          # windows per row
+WINDOW_WIDTH = 240   # pixels; the height follows the video's aspect ratio
+                     # (6 x 240 fits 2 rows = 12 windows on a 1080p laptop screen at 125% scaling)
 # ---------------------------------------------------------------- end of settings
 
 ROOT = Path(__file__).resolve().parent

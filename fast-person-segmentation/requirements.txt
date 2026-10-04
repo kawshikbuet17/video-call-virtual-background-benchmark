@@ -1,0 +1,6 @@
+# Tested with Python 3.10 (local: 3.10.0 on Windows 11)
+# CPU only. No TensorFlow needed: OpenCV's DNN module runs the frozen TF graph (.pb).
+numpy==2.2.6
+# OpenCV 4.11, NOT 5.x: OpenCV 5's new DNN engine runs this model about 20x slower
+# (about 250 ms instead of 11-17 ms per frame, measured on the same PC, same output).
+opencv-python==4.11.0.86

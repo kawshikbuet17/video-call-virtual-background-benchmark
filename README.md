@@ -78,7 +78,7 @@ This sets up all of them (takes a while; run from the project root):
 Windows (PowerShell):
 
 ```powershell
-foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm", "sinet", "u2net", "deeplabv3-mobilenet", "bodypix") {
+foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm", "sinet", "u2net", "deeplabv3-mobilenet", "bodypix", "fast-person-segmentation") {
     python -m venv "$m\.venv"
     & "$m\.venv\Scripts\python.exe" -m pip install -r "$m\requirements.txt"
     & "$m\.venv\Scripts\python.exe" "$m\download_model.py"
@@ -88,7 +88,7 @@ foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapip
 Linux / macOS:
 
 ```bash
-for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm sinet u2net deeplabv3-mobilenet bodypix; do
+for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm sinet u2net deeplabv3-mobilenet bodypix fast-person-segmentation; do
     python3 -m venv "$m/.venv"
     # The extra index gives CPU-only PyTorch on Linux (sinet, u2net, deeplabv3-mobilenet); other packages still come from PyPI.
     "$m/.venv/bin/python" -m pip install -r "$m/requirements.txt" --extra-index-url https://download.pytorch.org/whl/cpu
@@ -135,9 +135,11 @@ Status, model size and min hardware are filled in as each model is done. Model s
 | 8 | U²-Net (human segmentation) | `u2net/` | Segmentation | 176.3 MB | No (very slow on CPU) | TBD (about 2 FPS on a laptop i7 CPU: not real time) | Yes (CPU), not tested yet | Apache-2.0 | In progress |
 | 9 | DeepLabV3 MobileNet (torchvision) | `deeplabv3-mobilenet/` | Segmentation | 44.4 MB | No (slow on CPU at full size) | TBD (about 4 FPS at 520, about 13 FPS at 256 on a laptop i7 CPU) | Yes (CPU), not tested yet | BSD-3-Clause | In progress |
 | 10 | TF.js BodyPix (run in Python via tf-bodypix) | `bodypix/` | Segmentation | 5.2 MB | No | TBD (about 11 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | Apache-2.0 (model), MIT (tf-bodypix) | In progress |
-| 11 | YOLO segmentation (Ultralytics) | `yolo-seg/` | Segmentation | TBD | No (faster with GPU) | TBD | Planned | **AGPL-3.0** | Not started |
-| 12 | Apple Vision person segmentation | `apple-vision/` | Segmentation | TBD | No | Mac only | No (macOS only) | Apple OS API | Not started |
-| 13 | NVIDIA Maxine | `nvidia-maxine/` | Segmentation | TBD | Yes (NVIDIA RTX) | NVIDIA RTX GPU | TBD | NVIDIA SDK license | Not started |
+| 11 | Deepixel Upperbody-Segmentation | - | Segmentation | - | No (CPU-only SDK) | TBD | TBD | Proprietary (license from Deepixel) | Blocked: SDK not publicly available |
+| 12 | fast_person_segmentation (Mobile-UNet) | `fast-person-segmentation/` | Segmentation | 14.7 MB | No | TBD (about 23-44 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | No license (repo); original model MIT | In progress |
+| 13 | YOLO segmentation (Ultralytics) | `yolo-seg/` | Segmentation | TBD | No (faster with GPU) | TBD | Planned | **AGPL-3.0** | Not started |
+| 14 | Apple Vision person segmentation | `apple-vision/` | Segmentation | TBD | No | Mac only | No (macOS only) | Apple OS API | Not started |
+| 15 | NVIDIA Maxine | `nvidia-maxine/` | Segmentation | TBD | Yes (NVIDIA RTX) | NVIDIA RTX GPU | TBD | NVIDIA SDK license | Not started |
 
 GPL-3.0 and AGPL-3.0 are restrictive for closed-source commercial use. Read the
 license before using those models in a product.
@@ -154,6 +156,8 @@ license before using those models in a product.
 | U²-Net (human segmentation) | [U²-Net (arXiv 2005.09007)](https://arxiv.org/abs/2005.09007) | [xuebinqin/U-2-Net](https://github.com/xuebinqin/U-2-Net) (we use `u2net_human_seg.pth`; `u2net_portrait.pth` is a drawing model) |
 | DeepLabV3 MobileNet | [DeepLabV3 (arXiv 1706.05587)](https://arxiv.org/abs/1706.05587), [MobileNetV3 (arXiv 1905.02244)](https://arxiv.org/abs/1905.02244) | [torchvision docs](https://pytorch.org/vision/stable/models/generated/torchvision.models.segmentation.deeplabv3_mobilenet_v3_large.html) |
 | TF.js BodyPix | TODO | [tfjs-models/body-pix](https://github.com/tensorflow/tfjs-models/tree/master/body-pix) (deprecated), [de-code/python-tf-bodypix](https://github.com/de-code/python-tf-bodypix) (Python wrapper used here) |
+| Deepixel Upperbody-Segmentation | - | [deepixel-inc/Upperbody-Segmentation](https://github.com/deepixel-inc/Upperbody-Segmentation) (README and API docs only), [evaluation script](https://github.com/deepixel-inc/Upperbody-Evaluation) |
+| fast_person_segmentation | - | [SamSamhuns/fast_person_segmentation](https://github.com/SamSamhuns/fast_person_segmentation) (model used here), [anilsathyan7/Portrait-Segmentation](https://github.com/anilsathyan7/Portrait-Segmentation) (original, MIT) |
 | YOLO segmentation | TODO | [ultralytics/ultralytics](https://github.com/ultralytics/ultralytics), [Segmentation docs](https://docs.ultralytics.com/tasks/segment/) |
 | Apple Vision | - | [VNGeneratePersonSegmentationRequest](https://developer.apple.com/documentation/vision/vngeneratepersonsegmentationrequest) |
 | NVIDIA Maxine | - | [NVIDIA Maxine](https://developer.nvidia.com/maxine) |
@@ -190,6 +194,8 @@ not needed), run each model 2-3 times, and report the typical value.
 | DeepLabV3 MobileNetV3 (input 520) | 44.4 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 4.3 | 162-176 | Local | torch 2.14.1 + torchvision 0.29.1 (CPU), official weights |
 | DeepLabV3 MobileNetV3 (input 256) | 44.4 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 13.4-13.9 | 54-55 | Local | Same model, smaller input |
 | BodyPix MobileNet 0.75 (stride 16) | 5.2 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 10.5-11.1 | 63-66 | Local | TensorFlow 2.11 + tf-bodypix 0.4.2, official TF.js model |
+| fast_person_segmentation (Mobile-UNet e260) | 14.7 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 43.7 | 14.2 | Local | OpenCV 4.11 DNN (no TensorFlow) |
+| fast_person_segmentation (Mobile-UNet e260) | 14.7 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 21.7-23.4 | 26.6-27.9 | Local | Webcam reading uses CPU too; 150 frames, 3 runs |
 
 ### Which model for which machine?
 
