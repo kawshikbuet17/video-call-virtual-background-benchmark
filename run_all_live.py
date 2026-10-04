@@ -32,6 +32,7 @@ MODELS = [
     "bodypix",                # deprecated by Google, weakest mask
     "fast-person-segmentation",
     "ncnn-portrait-segmentation",
+    "fast-portrait-segmentation",  # same model as ncnn-portrait-segmentation, in PyTorch
 ]
 
 # Extra options for a model's live.py (optional).
@@ -44,7 +45,7 @@ EXTRA_ARGS = {
 CAMERA = 0           # webcam index
 COLUMNS = 6          # windows per row
 WINDOW_WIDTH = 240   # pixels; the height follows the video's aspect ratio
-                     # (6 x 240 fits 2 rows = 12 windows on a 1080p laptop screen at 125% scaling)
+                     # (6 x 240 fits 3 rows = 18 windows on a 1080p laptop screen at 125% scaling)
 # ---------------------------------------------------------------- end of settings
 
 ROOT = Path(__file__).resolve().parent

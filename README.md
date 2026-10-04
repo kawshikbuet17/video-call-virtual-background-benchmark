@@ -78,7 +78,7 @@ This sets up all of them (takes a while; run from the project root):
 Windows (PowerShell):
 
 ```powershell
-foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm", "sinet", "u2net", "deeplabv3-mobilenet", "bodypix", "fast-person-segmentation", "ncnn-portrait-segmentation") {
+foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm", "sinet", "u2net", "deeplabv3-mobilenet", "bodypix", "fast-person-segmentation", "ncnn-portrait-segmentation", "fast-portrait-segmentation") {
     python -m venv "$m\.venv"
     & "$m\.venv\Scripts\python.exe" -m pip install -r "$m\requirements.txt"
     & "$m\.venv\Scripts\python.exe" "$m\download_model.py"
@@ -88,9 +88,9 @@ foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapip
 Linux / macOS:
 
 ```bash
-for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm sinet u2net deeplabv3-mobilenet bodypix fast-person-segmentation ncnn-portrait-segmentation; do
+for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm sinet u2net deeplabv3-mobilenet bodypix fast-person-segmentation ncnn-portrait-segmentation fast-portrait-segmentation; do
     python3 -m venv "$m/.venv"
-    # The extra index gives CPU-only PyTorch on Linux (sinet, u2net, deeplabv3-mobilenet); other packages still come from PyPI.
+    # The extra index gives CPU-only PyTorch on Linux (sinet, u2net, deeplabv3-mobilenet, fast-portrait-segmentation); other packages still come from PyPI.
     "$m/.venv/bin/python" -m pip install -r "$m/requirements.txt" --extra-index-url https://download.pytorch.org/whl/cpu
     "$m/.venv/bin/python" "$m/download_model.py"
 done
@@ -138,9 +138,10 @@ Status, model size and min hardware are filled in as each model is done. Model s
 | 11 | Deepixel Upperbody-Segmentation | - | Segmentation | - | No (CPU-only SDK) | TBD | TBD | Proprietary (license from Deepixel) | Blocked: SDK not publicly available |
 | 12 | fast_person_segmentation (Mobile-UNet) | `fast-person-segmentation/` | Segmentation | 14.7 MB | No | TBD (about 23-44 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | No license (repo); original model MIT | In progress |
 | 13 | ncnn-portrait-segmentation (ERDNet) | `ncnn-portrait-segmentation/` | Segmentation | 3.3 MB | No | TBD (about 40-47 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | MIT (code); model origin has no license | In progress |
-| 14 | YOLO segmentation (Ultralytics) | `yolo-seg/` | Segmentation | TBD | No (faster with GPU) | TBD | Planned | **AGPL-3.0** | Not started |
-| 15 | Apple Vision person segmentation | `apple-vision/` | Segmentation | TBD | No | Mac only | No (macOS only) | Apple OS API | Not started |
-| 16 | NVIDIA Maxine | `nvidia-maxine/` | Segmentation | TBD | Yes (NVIDIA RTX) | NVIDIA RTX GPU | TBD | NVIDIA SDK license | Not started |
+| 14 | Fast_Portrait_Segmentation (ERD seg-matting, PyTorch) | `fast-portrait-segmentation/` | Matting | 3.4 MB | No | TBD (about 36-41 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | No license | In progress |
+| 15 | YOLO segmentation (Ultralytics) | `yolo-seg/` | Segmentation | TBD | No (faster with GPU) | TBD | Planned | **AGPL-3.0** | Not started |
+| 16 | Apple Vision person segmentation | `apple-vision/` | Segmentation | TBD | No | Mac only | No (macOS only) | Apple OS API | Not started |
+| 17 | NVIDIA Maxine | `nvidia-maxine/` | Segmentation | TBD | Yes (NVIDIA RTX) | NVIDIA RTX GPU | TBD | NVIDIA SDK license | Not started |
 
 GPL-3.0 and AGPL-3.0 are restrictive for closed-source commercial use. Read the
 license before using those models in a product.
@@ -160,6 +161,7 @@ license before using those models in a product.
 | Deepixel Upperbody-Segmentation | - | [deepixel-inc/Upperbody-Segmentation](https://github.com/deepixel-inc/Upperbody-Segmentation) (README and API docs only), [evaluation script](https://github.com/deepixel-inc/Upperbody-Evaluation) |
 | fast_person_segmentation | - | [SamSamhuns/fast_person_segmentation](https://github.com/SamSamhuns/fast_person_segmentation) (model used here), [anilsathyan7/Portrait-Segmentation](https://github.com/anilsathyan7/Portrait-Segmentation) (original, MIT) |
 | ncnn-portrait-segmentation (ERDNet) | - | [leeys888/ncnn-portrait-segmentation](https://github.com/leeys888/ncnn-portrait-segmentation) (model used here), [lizhengwei1992/Fast_Portrait_Segmentation](https://github.com/lizhengwei1992/Fast_Portrait_Segmentation) (model origin), [Tencent/ncnn](https://github.com/Tencent/ncnn) |
+| Fast_Portrait_Segmentation (ERD seg-matting) | - | [lizhengwei1992/Fast_Portrait_Segmentation](https://github.com/lizhengwei1992/Fast_Portrait_Segmentation), [lizhengwei1992/mobile_phone_human_matting](https://github.com/lizhengwei1992/mobile_phone_human_matting) (weights and code used here) |
 | YOLO segmentation | TODO | [ultralytics/ultralytics](https://github.com/ultralytics/ultralytics), [Segmentation docs](https://docs.ultralytics.com/tasks/segment/) |
 | Apple Vision | - | [VNGeneratePersonSegmentationRequest](https://developer.apple.com/documentation/vision/vngeneratepersonsegmentationrequest) |
 | NVIDIA Maxine | - | [NVIDIA Maxine](https://developer.nvidia.com/maxine) |
@@ -200,6 +202,8 @@ not needed), run each model 2-3 times, and report the typical value.
 | fast_person_segmentation (Mobile-UNet e260) | 14.7 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 21.7-23.4 | 26.6-27.9 | Local | Webcam reading uses CPU too; 150 frames, 3 runs |
 | ncnn ERDNet | 3.3 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 47.1 | 15.2 | Local | ncnn 1.0.20260526 Python package, 4 threads |
 | ncnn ERDNet | 3.3 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 38.1-42.9 | 17.1-18.9 | Local | 150 frames, 2 runs |
+| Fast_Portrait_Segmentation ERD (PyTorch) | 3.4 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 41.5 | 17.1 | Local | torch 2.14.1 (CPU); same model as ncnn ERDNet |
+| Fast_Portrait_Segmentation ERD (PyTorch) | 3.4 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 36.5 | 19.5 | Local | 150 frames |
 
 ### Which model for which machine?
 
