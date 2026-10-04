@@ -29,6 +29,7 @@ MODELS = [
     "sinet",
     "u2net",                  # very slow on CPU (about 2 FPS) and slows the others: comment out if needed
     "deeplabv3-mobilenet",    # general 21-class model, soft edges
+    "bodypix",                # deprecated by Google, weakest mask
 ]
 
 # Extra options for a model's live.py (optional).

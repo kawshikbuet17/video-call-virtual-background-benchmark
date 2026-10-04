@@ -1,0 +1,12 @@
+# Tested with Python 3.10 (local: 3.10.0 on Windows 11)
+# CPU only. TensorFlow uses the CPU here (no GPU setup in this project).
+# tf-bodypix (MIT, third party) runs the official BodyPix TF.js model files in Python.
+tf-bodypix==0.4.2
+# tf-bodypix's own "[all]" extra pins TensorFlow 2.11; newer TensorFlow is not tested with it.
+tensorflow==2.11.0
+# Converts the TF.js model (model.json + weights) into a TensorFlow graph.
+tfjs-graph-converter==1.6.1
+# TensorFlow 2.11 needs numpy older than 1.24.
+numpy==1.23.5
+# Newest OpenCV that still works with numpy 1.23 (the other models use 5.0.0.93).
+opencv-python==4.11.0.86
