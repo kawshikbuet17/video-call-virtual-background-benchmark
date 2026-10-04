@@ -153,6 +153,11 @@ fixes · License note (warn clearly for GPL/AGPL or other restrictive licenses).
   heat). Close other heavy apps (and any open live.py window), run 2-3 times,
   report typical values. Pinning to P-cores (affinity 0xFFF) did not fix it.
 
+- MediaPipe installs `opencv-contrib-python`; pin that instead of `opencv-python`
+  (never both). Use the Tasks API (`mediapipe.tasks.python.vision`), not the
+  deprecated `mp.solutions`.
+- The MediaPipe docs moved from ai.google.dev to developers.google.com/edge/mediapipe/.
+
 ## Coding style
 
 - Simple, readable Python. Minimal dependencies. Plain functions over classes.

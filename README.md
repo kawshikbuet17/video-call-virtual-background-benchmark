@@ -85,7 +85,7 @@ Status and min hardware are filled in as each model is done. See `PROGRESS.md` f
 |---|-------|--------|------|------------|--------------|----------------|---------|--------|
 | 1 | PP-HumanSeg v1 (portrait Lite) | `pp-humanseg-v1/` | Segmentation | No | TBD (about 20 FPS on a laptop i7 CPU) | Yes (CPU) | Apache-2.0 | Done |
 | 2 | PP-HumanSegV2 Lite (portrait) | `pp-humanseg-v2/` | Segmentation | No | TBD (about 25 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | Apache-2.0 | In progress |
-| 3 | MediaPipe Selfie Segmentation (landscape) | `mediapipe-selfie/` | Segmentation | No | TBD | Planned | Apache-2.0 | Not started |
+| 3 | MediaPipe Selfie Segmentation (landscape) | `mediapipe-selfie/` | Segmentation | No | TBD (40+ FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | Apache-2.0 (see model card) | In progress |
 | 4 | MediaPipe Selfie Multiclass | `mediapipe-multiclass/` | Segmentation | No | TBD | Planned | Apache-2.0 | Not started |
 | 5 | MODNet | `modnet/` | Matting | No | TBD | Planned | Apache-2.0 | Not started |
 | 6 | Robust Video Matting (RVM) | `rvm/` | Matting | No (faster with GPU) | TBD | Planned | **GPL-3.0** | Not started |
@@ -105,7 +105,7 @@ license before using those models in a product.
 | Model | Paper | Code / docs |
 |-------|-------|-------------|
 | PP-HumanSeg v1 / V2 | [PP-HumanSeg (arXiv 2112.07146)](https://arxiv.org/abs/2112.07146) | [PaddleSeg](https://github.com/PaddlePaddle/PaddleSeg), [PP-HumanSeg folder](https://github.com/PaddlePaddle/PaddleSeg/tree/release/2.9/contrib/PP-HumanSeg) |
-| MediaPipe Selfie / Multiclass | TODO | [Image segmenter guide](https://ai.google.dev/edge/mediapipe/solutions/vision/image_segmenter), [MediaPipe repo](https://github.com/google-ai-edge/mediapipe) |
+| MediaPipe Selfie / Multiclass | TODO | [Image segmenter guide](https://developers.google.com/edge/mediapipe/solutions/vision/image_segmenter), [Selfie model card](https://storage.googleapis.com/mediapipe-assets/Model%20Card%20MediaPipe%20Selfie%20Segmentation.pdf), [Multiclass model card](https://storage.googleapis.com/mediapipe-assets/Model%20Card%20Multiclass%20Segmentation.pdf), [MediaPipe repo](https://github.com/google-ai-edge/mediapipe) |
 | MODNet | [MODNet (arXiv 2011.11961)](https://arxiv.org/abs/2011.11961) | [ZHKKKe/MODNet](https://github.com/ZHKKKe/MODNet) |
 | Robust Video Matting | [RVM (arXiv 2108.11515)](https://arxiv.org/abs/2108.11515) | [PeterL1n/RobustVideoMatting](https://github.com/PeterL1n/RobustVideoMatting) |
 | SINet | [SINet (arXiv 1911.09099)](https://arxiv.org/abs/1911.09099) | [clovaai/c3_sinet](https://github.com/clovaai/c3_sinet) |
@@ -134,6 +134,8 @@ not needed), run each model 2-3 times, and report the typical value.
 | PP-HumanSeg v1 | CPU: Intel i7-13620H (no GPU used) | 16 GB host (8 GB WSL2 VM) | 640x480 (video) | 20.6 | 44.4 | Docker | Docker Desktop on WSL2, same test clip |
 | PP-HumanSeg V2 | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 26-27 | 32-34 | Local | Windows 11, Paddle 3.3.1, test clip, typical of quiet runs |
 | PP-HumanSeg v1 | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 22-23 | 37-39 | Local | Re-measured the same session for comparison with V2 |
+| MediaPipe Selfie (landscape) | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 110 | 3.6 | Local | Windows 11, mediapipe 1.0.1, test clip, 2 runs |
+| MediaPipe Selfie (landscape) | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 41-63 | 6-11 | Local | 150 frames, 2 runs |
 
 ### Which model for which machine?
 
