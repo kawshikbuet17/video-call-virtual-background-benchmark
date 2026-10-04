@@ -72,6 +72,12 @@ by only one process at a time (tested: a second process gets no frames).
 Every new model's `live.py` must support these three options, and the model must
 be added (commented or not) to `MODELS` in `run_all_live.py`.
 
+Testing a new model in run-all (user rule, 2026-10-04): do NOT launch all models
+(it loads the CPU too much). Only check that the new model's window position fits
+the screen (1536x816 usable here; 4 columns x 370 px), for example by computing the
+positions or by starting just the new model's `live.py --window-pos X Y
+--window-width W`.
+
 ## Folder conventions
 
 ```

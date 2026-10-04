@@ -78,7 +78,7 @@ This sets up all of them (takes a while; run from the project root):
 Windows (PowerShell):
 
 ```powershell
-foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm", "sinet") {
+foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm", "sinet", "u2net") {
     python -m venv "$m\.venv"
     & "$m\.venv\Scripts\python.exe" -m pip install -r "$m\requirements.txt"
     & "$m\.venv\Scripts\python.exe" "$m\download_model.py"
@@ -88,7 +88,7 @@ foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapip
 Linux / macOS:
 
 ```bash
-for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm sinet; do
+for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm sinet u2net; do
     python3 -m venv "$m/.venv"
     # The extra index gives CPU-only PyTorch on Linux (used by sinet); other packages still come from PyPI.
     "$m/.venv/bin/python" -m pip install -r "$m/requirements.txt" --extra-index-url https://download.pytorch.org/whl/cpu
@@ -132,7 +132,7 @@ Status, model size and min hardware are filled in as each model is done. Model s
 | 5 | MODNet | `modnet/` | Matting | 25.9 MB | No (slow on CPU at full size) | TBD (about 5 FPS at 512, about 20 FPS at 256 on a laptop i7 CPU) | Yes (CPU), not tested yet | Apache-2.0 | In progress |
 | 6 | Robust Video Matting (RVM) | `rvm/` | Matting | 15.0 MB | No | TBD (about 10 FPS default, 25-29 FPS at ratio 0.4 on a laptop i7 CPU) | Yes (CPU), not tested yet | **GPL-3.0** | In progress |
 | 7 | SINet | `sinet/` | Segmentation | 0.44 MB | No | TBD (about 23 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | MIT | In progress |
-| 8 | U²-Net (portrait) | `u2net/` | Segmentation | TBD | Recommended (too slow on CPU) | TBD | Planned | Apache-2.0 | Not started |
+| 8 | U²-Net (human segmentation) | `u2net/` | Segmentation | 176.3 MB | No (very slow on CPU) | TBD (about 2 FPS on a laptop i7 CPU: not real time) | Yes (CPU), not tested yet | Apache-2.0 | In progress |
 | 9 | DeepLabV3 MobileNet (torchvision) | `deeplabv3-mobilenet/` | Segmentation | TBD | No | TBD | Planned | BSD-3-Clause | Not started |
 | 10 | TF.js BodyPix | `bodypix/` | Segmentation | TBD | No | TBD | TBD (may need Node.js/browser) | Apache-2.0 | Not started |
 | 11 | YOLO segmentation (Ultralytics) | `yolo-seg/` | Segmentation | TBD | No (faster with GPU) | TBD | Planned | **AGPL-3.0** | Not started |
@@ -151,7 +151,7 @@ license before using those models in a product.
 | MODNet | [MODNet (arXiv 2011.11961)](https://arxiv.org/abs/2011.11961) | [ZHKKKe/MODNet](https://github.com/ZHKKKe/MODNet) |
 | Robust Video Matting | [RVM (arXiv 2108.11515)](https://arxiv.org/abs/2108.11515) | [PeterL1n/RobustVideoMatting](https://github.com/PeterL1n/RobustVideoMatting) |
 | SINet | [SINet (arXiv 1911.09099)](https://arxiv.org/abs/1911.09099) | [clovaai/ext_portrait_segmentation](https://github.com/clovaai/ext_portrait_segmentation) (portrait model, used here), [clovaai/c3_sinet](https://github.com/clovaai/c3_sinet) (street-scene version) |
-| U²-Net | [U²-Net (arXiv 2005.09007)](https://arxiv.org/abs/2005.09007) | [xuebinqin/U-2-Net](https://github.com/xuebinqin/U-2-Net) |
+| U²-Net (human segmentation) | [U²-Net (arXiv 2005.09007)](https://arxiv.org/abs/2005.09007) | [xuebinqin/U-2-Net](https://github.com/xuebinqin/U-2-Net) (we use `u2net_human_seg.pth`; `u2net_portrait.pth` is a drawing model) |
 | DeepLabV3 MobileNet | [DeepLabV3 (arXiv 1706.05587)](https://arxiv.org/abs/1706.05587), [MobileNetV3 (arXiv 1905.02244)](https://arxiv.org/abs/1905.02244) | [torchvision docs](https://pytorch.org/vision/stable/models/generated/torchvision.models.segmentation.deeplabv3_mobilenet_v3_large.html) |
 | TF.js BodyPix | TODO | [tfjs-models/body-pix](https://github.com/tensorflow/tfjs-models/tree/master/body-pix) |
 | YOLO segmentation | TODO | [ultralytics/ultralytics](https://github.com/ultralytics/ultralytics), [Segmentation docs](https://docs.ultralytics.com/tasks/segment/) |
@@ -186,6 +186,7 @@ not needed), run each model 2-3 times, and report the typical value.
 | RVM MobileNetV3 (auto ratio 0.8) | 15.0 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 9.9-10.1 | 88 | Local | onnxruntime 1.23.2, official fp32 ONNX |
 | RVM MobileNetV3 (ratio 0.4) | 15.0 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 25.3-29.3 | 25-29 | Local | Same model, smaller first stage |
 | SINet | 0.44 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 22.7-24.3 | 35-37 | Local | PyTorch 2.14.1 (CPU), official weights |
+| U²-Net (human seg) | 176.3 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 1.9 | 518-523 | Local | PyTorch 2.14.1 (CPU), official weights; 30 frames |
 
 ### Which model for which machine?
 

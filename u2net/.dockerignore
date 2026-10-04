@@ -1,0 +1,5 @@
+# Template: copy this file into each model folder.
+# Keeps the Docker build context small and avoids copying local-only files.
+.venv
+outputs/
+__pycache__

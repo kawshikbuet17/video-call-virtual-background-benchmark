@@ -27,6 +27,7 @@ MODELS = [
     "modnet",
     "rvm",                    # GPL-3.0 license
     "sinet",
+    "u2net",                  # very slow on CPU (about 2 FPS) and slows the others: comment out if needed
 ]
 
 # Extra options for a model's live.py (optional).
