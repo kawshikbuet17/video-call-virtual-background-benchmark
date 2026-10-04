@@ -62,7 +62,10 @@ assets/samples/       shared test images/videos
   requirements.txt    CPU packages, pinned
   requirements-gpu.txt  only if GPU needs different packages
   download_model.py   downloads weights into <model-name>/models/
-  run.py              single entry point
+  run.py              single entry point (benchmark view: 4 panels)
+  live.py             optional live video-call view (one big window + picker bar:
+                      None / Blur light / Blur strong / backgrounds; click or 1-9);
+                      imports the model functions from run.py, local only
   Dockerfile          built from inside the model folder
   .dockerignore       copy of the root template
   models/             downloaded weights (git-ignored)
@@ -128,6 +131,23 @@ fixes · License note (warn clearly for GPL/AGPL or other restrictive licenses).
   display/save.
 - Preprocess correctly per model (input size, normalization, RGB/BGR,
   NCHW/NHWC) and comment why.
+
+## Lessons learned (apply to every model)
+
+- Paddle's default CPU config uses 1 thread; more threads were not faster for
+  PP-HumanSeg v1. oneDNN crashes on old `.pdmodel` files in Paddle 3.x.
+- Blend with `cv2.blendLinear(frame, bg, alpha, 1 - alpha)` (float32 alpha).
+  The numpy formula `a * frame + (1 - a) * bg` is about 10x slower.
+- Blur by shrinking 8x, blurring, then scaling back up. A big Gaussian kernel
+  on the full frame is much slower.
+- `python:3.10-slim` needs `libgl1 libglib2.0-0` for `opencv-python`, plus
+  `libsm6` to open a window (X11). Paddle also needs `libgomp1`.
+- Docker X11 display can be tested on this Windows machine from WSL
+  (`wsl -d Ubuntu-24.04`, WSLg gives `DISPLAY=:0`). The webcam cannot be tested in Docker here.
+- Git Bash rewrites `/paths` in docker arguments; prefix commands with
+  `MSYS_NO_PATHCONV=1` or use PowerShell.
+- Mark `run.py` and `download_model.py` executable in git
+  (`git add --chmod=+x`) and give them a `#!/usr/bin/env python3` line.
 
 ## Coding style
 

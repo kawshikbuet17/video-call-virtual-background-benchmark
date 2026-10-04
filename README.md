@@ -46,6 +46,8 @@ Then pick a model folder and use one of two ways to run it.
 2. Create a virtual environment in `.venv` and install `requirements.txt`.
 3. Run `python download_model.py`.
 4. Run `python run.py` (webcam), or `--image` / `--video` with a file.
+5. For a live video-call view where you pick blur or a background, run
+   `python live.py` (in model folders that have it).
 
 **B. With Docker (image/video files on every OS; webcam on Linux only)**
 
@@ -81,7 +83,7 @@ Status and min hardware are filled in as each model is done. See `PROGRESS.md` f
 
 | # | Model | Folder | Type | GPU needed | Min hardware | Docker support | License | Status |
 |---|-------|--------|------|------------|--------------|----------------|---------|--------|
-| 1 | PP-HumanSeg v1 (portrait Lite) | `pp-humanseg-v1/` | Segmentation | No | TBD | Planned | Apache-2.0 | Not started |
+| 1 | PP-HumanSeg v1 (portrait Lite) | `pp-humanseg-v1/` | Segmentation | No | TBD (about 20 FPS on a laptop i7 CPU) | Yes (CPU) | Apache-2.0 | Done |
 | 2 | PP-HumanSegV2 Lite (portrait) | `pp-humanseg-v2/` | Segmentation | No | TBD | Planned | Apache-2.0 | Not started |
 | 3 | MediaPipe Selfie Segmentation (landscape) | `mediapipe-selfie/` | Segmentation | No | TBD | Planned | Apache-2.0 | Not started |
 | 4 | MediaPipe Selfie Multiclass | `mediapipe-multiclass/` | Segmentation | No | TBD | Planned | Apache-2.0 | Not started |
@@ -122,7 +124,9 @@ hardware is known.
 
 | Model | Device (CPU/GPU name) | RAM | Resolution | Avg FPS | Avg inference (ms) | Local/Docker | Notes |
 |-------|-----------------------|-----|------------|---------|--------------------|--------------|-------|
-| - | - | - | - | - | - | - | No results yet |
+| PP-HumanSeg v1 | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 20.3 | 41.5 | Local | Windows 11, Paddle 3.3.1, 150 frames |
+| PP-HumanSeg v1 | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 22.5 | 38.2 | Local | Windows 11, test clip, 75 frames |
+| PP-HumanSeg v1 | CPU: Intel i7-13620H (no GPU used) | 16 GB host (8 GB WSL2 VM) | 640x480 (video) | 20.6 | 44.4 | Docker | Docker Desktop on WSL2, same test clip |
 
 ### Which model for which machine?
 
