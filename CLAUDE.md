@@ -149,6 +149,10 @@ fixes · License note (warn clearly for GPL/AGPL or other restrictive licenses).
 - Mark `run.py` and `download_model.py` executable in git
   (`git add --chmod=+x`) and give them a `#!/usr/bin/env python3` line.
 
+- Benchmarks on this laptop vary up to 2x between runs (P-/E-cores, turbo,
+  heat). Close other heavy apps (and any open live.py window), run 2-3 times,
+  report typical values. Pinning to P-cores (affinity 0xFFF) did not fix it.
+
 ## Coding style
 
 - Simple, readable Python. Minimal dependencies. Plain functions over classes.
