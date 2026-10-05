@@ -194,6 +194,12 @@ fixes · License note (warn clearly for GPL/AGPL or other restrictive licenses).
   full TensorFlow.
 - Webcam runs on this laptop are often 2-3x slower in inference than video-file runs
   (reading the camera uses a lot of CPU). Report video and webcam rows separately.
+- Per-pixel loops (for example a pipeline ported from a GPU shader) are too slow in
+  numpy and OpenCV. Write them as a plain loop with numba (`@njit(cache=True,
+  parallel=True)` + `prange`) and limit the threads (`numba.set_num_threads`, 4 was
+  enough). Warm up in `load_model()` so the compile does not hit the first frame.
+- A repo without a license: do not copy its code. Write our own version of the method
+  and say so in the README license note.
 
 ## Coding style
 

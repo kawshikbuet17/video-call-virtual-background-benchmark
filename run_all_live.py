@@ -34,6 +34,7 @@ MODELS = [
     "ncnn-portrait-segmentation",
     "fast-portrait-segmentation",  # same model as ncnn-portrait-segmentation, in PyTorch
     "slimnet",
+    "webinar-humanseg",       # PP-HumanSegV2 + the netesh3/webinar temporal and edge steps
 ]
 
 # Extra options for a model's live.py (optional).

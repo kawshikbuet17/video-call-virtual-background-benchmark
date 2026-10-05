@@ -1,0 +1,10 @@
+# Tested with Python 3.10 (local: 3.10.0 on Windows 11)
+# CPU only.
+onnxruntime==1.23.2
+numpy==2.2.6
+# numba compiles the per-pixel edge step (a GPU shader in the browser app) to fast
+# machine code. The same step in plain numpy was about 7x slower.
+numba==0.68.0
+# Full OpenCV (with window support) for local runs. The Docker image uses the same
+# package so that the Linux webcam + display command works there too.
+opencv-python==5.0.0.93
