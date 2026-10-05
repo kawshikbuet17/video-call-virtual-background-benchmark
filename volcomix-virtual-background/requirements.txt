@@ -1,0 +1,11 @@
+# Tested with Python 3.10 (local: 3.10.0 on Windows 11)
+# CPU only.
+# LiteRT: Google's standalone TFLite runtime (no full TensorFlow needed).
+ai-edge-litert==2.2.0
+numpy==2.2.6
+# numba compiles the joint bilateral filter (a GPU shader in the browser demo)
+# to fast machine code.
+numba==0.68.0
+# Full OpenCV (with window support) for local runs. The Docker image uses the same
+# package so that the Linux webcam + display command works there too.
+opencv-python==5.0.0.93

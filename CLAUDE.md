@@ -204,6 +204,8 @@ fixes · License note (warn clearly for GPL/AGPL or other restrictive licenses).
   numpy and OpenCV. Write them as a plain loop with numba (`@njit(cache=True,
   parallel=True)` + `prange`) and limit the threads (`numba.set_num_threads`, 4 was
   enough). Warm up in `load_model()` so the compile does not hit the first frame.
+- Full-frame float math in numpy is slow here too (light wrap on 640x480x3 took
+  18 ms). Per-pixel compositing beyond `cv2.blendLinear` goes into numba as well.
 - A repo without a license: do not copy its code. Write our own version of the method
   and say so in the README license note.
 
@@ -216,6 +218,6 @@ fixes · License note (warn clearly for GPL/AGPL or other restrictive licenses).
 
 ## Git
 
-- This folder is its own git repo (branch `master`).
+- This folder is its own git repo (branch `main`; renamed from `master` on 2026-10-05).
 - Commit only when the user says yes (rule 4).
 - Never commit model weights, virtual environments or outputs.

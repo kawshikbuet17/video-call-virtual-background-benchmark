@@ -42,6 +42,7 @@ MODELS = [
     "fast-portrait-segmentation",  # same model as ncnn-portrait-segmentation, in PyTorch
     "slimnet",
     "webinar-humanseg",       # PP-HumanSegV2 + the netesh3/webinar temporal and edge steps
+    "volcomix-virtual-background",  # Google Meet model (lite) + joint bilateral filter; --model in EXTRA_ARGS
 ]
 
 # Extra options for a model's live.py (optional).
@@ -49,6 +50,7 @@ EXTRA_ARGS = {
     "modnet": ["--ref-size", "256"],  # 512 (official) is about 5 FPS on CPU
     "rvm": ["--downsample-ratio", "0.4"],  # automatic (0.8 at 640x480) is about 10 FPS on CPU
     "deeplabv3-mobilenet": ["--input-size", "256"],  # 520 (official) is about 4 FPS on CPU
+    "volcomix-virtual-background": ["--model", "meet-lite"],  # or meet-full / mlkit
 }
 
 CAMERA = 0           # webcam index
