@@ -72,11 +72,17 @@ by only one process at a time (tested: a second process gets no frames).
 Every new model's `live.py` must support these three options, and the model must
 be added (commented or not) to `MODELS` in `run_all_live.py`.
 
+Layout (user request, 2026-10-05): the screen's work area is split into a grid by
+the number of selected models (1 = full window, 2 = side by side, 3-4 = 2x2, 5-6 =
+3x2, ...: columns = ceil(sqrt(n))). Each picture is as wide as its cell allows,
+using the camera size that `camera_share.py` prints ("ready. 640x480") plus the
+90 px picker bar and a 16 x 38 px window frame. The user usually runs at most 4.
+
 Testing a new model in run-all (user rule, 2026-10-04): do NOT launch all models
-(it loads the CPU too much). Only check that the new model's window position fits
-the screen (1536x816 usable here; 6 columns x 240 px, 3 rows, room for 18 windows), for example by computing the
-positions or by starting just the new model's `live.py --window-pos X Y
---window-width W`.
+(it loads the CPU too much). The layout is automatic, so a new model only needs its
+`live.py` to accept `--shared-camera --window-pos X Y --window-width W`; check it by
+starting just the new model (for example `python -c "import run_all_live as r;
+r.MODELS=['<model>']; r.main()"`). Screen here: 1536x816 usable.
 
 ## Folder conventions
 

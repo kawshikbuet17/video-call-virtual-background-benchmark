@@ -68,9 +68,23 @@ Open `run_all_live.py` and comment out (`#`) the models you do not want in the
 python run_all_live.py
 ```
 
-Each selected model opens its own `live.py` window, tiled on the screen, all
-showing your webcam. Each window has its own picker bar. Close a window with `q`;
-Ctrl+C in the terminal closes all of them.
+Each selected model opens its own `live.py` window, all showing your webcam.
+Each window has its own picker bar. Close a window with `q`; Ctrl+C in the
+terminal closes all of them.
+
+The windows share the screen, as large as possible:
+
+| Models selected | Layout |
+|-----------------|--------|
+| 1 | one big window |
+| 2 | side by side |
+| 3 or 4 | 2 x 2 grid |
+| 5 or 6 | 3 x 2 grid |
+| 7 to 9 | 3 x 3 grid (and so on) |
+
+Run up to 4 at once. More models make every window slow, because they all share
+one CPU. The screen size is detected; if the windows do not fit, set `SCREEN` in
+`run_all_live.py`.
 
 Every window runs in its model's own venv, so set up each model once first.
 This sets up all of them (takes a while; run from the project root):

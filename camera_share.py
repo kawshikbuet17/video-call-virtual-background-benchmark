@@ -94,7 +94,9 @@ def serve(camera_index):
     # run_all_live.py stops us with terminate() (SIGTERM on Linux/macOS). Treat it
     # like Ctrl+C so the cleanup below still runs and the shared memory is freed.
     signal.signal(signal.SIGTERM, raise_keyboard_interrupt)
-    print("Shared camera ready.", flush=True)
+    # run_all_live.py reads this line; the frame size tells it the windows' shape.
+    width, height = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    print(f"Shared camera ready. {width}x{height}", flush=True)
     try:
         while True:
             ok, frame = cap.read()
