@@ -92,7 +92,7 @@ This sets up all of them (takes a while; run from the project root):
 Windows (PowerShell):
 
 ```powershell
-foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm", "sinet", "u2net", "deeplabv3-mobilenet", "bodypix", "fast-person-segmentation", "ncnn-portrait-segmentation", "fast-portrait-segmentation", "slimnet", "webinar-humanseg", "volcomix-virtual-background", "gregblur", "linux-fake-background-webcam", "yolo-seg") {
+foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm", "sinet", "u2net", "deeplabv3-mobilenet", "bodypix", "fast-person-segmentation", "ncnn-portrait-segmentation", "fast-portrait-segmentation", "slimnet", "webinar-humanseg", "volcomix-virtual-background", "gregblur", "linux-fake-background-webcam", "yolo-seg", "ai-segmenter") {
     python -m venv "$m\.venv"
     & "$m\.venv\Scripts\python.exe" -m pip install -r "$m\requirements.txt"
     & "$m\.venv\Scripts\python.exe" "$m\download_model.py"
@@ -102,9 +102,9 @@ foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapip
 Linux / macOS:
 
 ```bash
-for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm sinet u2net deeplabv3-mobilenet bodypix fast-person-segmentation ncnn-portrait-segmentation fast-portrait-segmentation slimnet webinar-humanseg volcomix-virtual-background gregblur linux-fake-background-webcam yolo-seg; do
+for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm sinet u2net deeplabv3-mobilenet bodypix fast-person-segmentation ncnn-portrait-segmentation fast-portrait-segmentation slimnet webinar-humanseg volcomix-virtual-background gregblur linux-fake-background-webcam yolo-seg ai-segmenter; do
     python3 -m venv "$m/.venv"
-    # The extra index gives CPU-only PyTorch on Linux (sinet, u2net, deeplabv3-mobilenet, fast-portrait-segmentation, yolo-seg); other packages still come from PyPI.
+    # The extra index gives CPU-only PyTorch on Linux (sinet, u2net, deeplabv3-mobilenet, fast-portrait-segmentation, yolo-seg, ai-segmenter); other packages still come from PyPI.
     "$m/.venv/bin/python" -m pip install -r "$m/requirements.txt" --extra-index-url https://download.pytorch.org/whl/cpu
     "$m/.venv/bin/python" "$m/download_model.py"
 done
@@ -159,8 +159,9 @@ Status, model size and min hardware are filled in as each model is done. Model s
 | 18 | gregblur (MediaPipe selfie segmenter / multiclass + bilateral, temporal, no-halo blur) | `gregblur/` | Segmentation | 0.25 MB selfie segmenter, 16.4 MB multiclass | No | TBD (about 18-24 FPS with selfie-segmenter on a laptop i7 CPU; default multiclass about 4-5 FPS) | Yes (CPU), not tested yet | Apache-2.0 (gregblur, MediaPipe) | In progress |
 | 19 | Linux-Fake-Background-Webcam recipe (MediaPipe selfie landscape + threshold, dilate, box blur) | `linux-fake-background-webcam/` | Segmentation | 0.25 MB | No | TBD (about 53-68 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | **GPL-3.0** (lfbw; our code is our own); MediaPipe Apache-2.0 | In progress |
 | 20 | YOLO segmentation (Ultralytics YOLO26 / YOLO11 / YOLOv8 nano) | `yolo-seg/` | Instance segmentation (COCO, person only) | 6.7 MB yolo26n-seg (6.2 / 7.1 MB for 11 / v8) | No (faster with GPU) | TBD (about 15-19 FPS at imgsz 640, 23-32 FPS at 320 on a laptop i7 CPU) | Yes (CPU), not tested yet | **AGPL-3.0** | In progress |
-| 21 | Apple Vision person segmentation | `apple-vision/` | Segmentation | TBD | No | Mac only | No (macOS only) | Apple OS API | Not started |
-| 22 | NVIDIA Maxine | `nvidia-maxine/` | Segmentation | TBD | Yes (NVIDIA RTX) | NVIDIA RTX GPU | TBD | NVIDIA SDK license | Not started |
+| 21 | AI-Segmenter pipeline (RVM matte + YOLO11n object selection; optional BiRefNet) | `ai-segmenter/` | Matting + detection | 21 MB (RVM 15 MB + YOLO11n 5.6 MB); BiRefNet 445 MB optional | No (the app is built for NVIDIA + TensorRT) | TBD (about 12-15 FPS RVM + YOLO on a laptop i7 CPU; BiRefNet 9-23 s per frame) | Yes (CPU), not tested yet | App MIT; **RVM GPL-3.0, YOLO AGPL-3.0**; BiRefNet MIT | In progress |
+| 22 | Apple Vision person segmentation | `apple-vision/` | Segmentation | TBD | No | Mac only | No (macOS only) | Apple OS API | Not started |
+| 23 | NVIDIA Maxine | `nvidia-maxine/` | Segmentation | TBD | Yes (NVIDIA RTX) | NVIDIA RTX GPU | TBD | NVIDIA SDK license | Not started |
 
 GPL-3.0 and AGPL-3.0 are restrictive for closed-source commercial use. Read the
 license before using those models in a product.
@@ -187,6 +188,7 @@ license before using those models in a product.
 | gregblur | - | [gregce/gregblur](https://github.com/gregce/gregblur) (Apache-2.0), [live demo](https://gregce.github.io/gregblur/), [pipeline explained](https://github.com/gregce/gregblur/blob/main/docs/pipeline.md), [MediaPipe image segmenter](https://developers.google.com/edge/mediapipe/solutions/vision/image_segmenter) |
 | Linux-Fake-Background-Webcam | - | [fangfufu/Linux-Fake-Background-Webcam](https://github.com/fangfufu/Linux-Fake-Background-Webcam) (GPL-3.0), [lfbw.py](https://github.com/fangfufu/Linux-Fake-Background-Webcam/blob/master/lfbw/lfbw.py) |
 | YOLO segmentation | - | [ultralytics/ultralytics](https://github.com/ultralytics/ultralytics) (AGPL-3.0), [Segmentation docs](https://docs.ultralytics.com/tasks/segment/), [YOLO26](https://docs.ultralytics.com/models/yolo26/), [licensing](https://www.ultralytics.com/license) |
+| AI-Segmenter | - | [Yerdnainspace/AI-Segmenter](https://github.com/Yerdnainspace/AI-Segmenter) (MIT), [BiRefNet](https://github.com/ZhengPeng7/BiRefNet) (MIT), [BiRefNet on Hugging Face](https://huggingface.co/ZhengPeng7/BiRefNet) |
 | Apple Vision | - | [VNGeneratePersonSegmentationRequest](https://developer.apple.com/documentation/vision/vngeneratepersonsegmentationrequest) |
 | NVIDIA Maxine | - | [NVIDIA Maxine](https://developer.nvidia.com/maxine) |
 
@@ -248,6 +250,9 @@ not needed), run each model 2-3 times, and report the typical value.
 | YOLO26n-seg (imgsz 640) | 6.7 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 16.1-16.8 | 53-55 | Local | 150 frames, 2 runs |
 | YOLO26n-seg (imgsz 320) | 6.7 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 22.9 / 32.1 | 35 / 25 | Local | Mask still clean on the test clip |
 | YOLO11n-seg / YOLOv8n-seg (imgsz 640) | 6.2 / 7.1 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 18.4 / 17.9 | 47.7 / 49.6 | Local | YOLO11 has holes at the shoulder patch on the test clip |
+| AI-Segmenter RVM + YOLO11n (default) | 21 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 12.3-14.6 | 60-66 | Local | YOLO every 3rd frame; CPU about half busy with other apps during the test |
+| AI-Segmenter RVM alone (`--no-yolo`) | 15 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 25.5-26.3 | 25-29 | Local | RVM ONNX, downsample 0.25 |
+| AI-Segmenter BiRefNet (512) | 445 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) / 960x1200 (image) | 0.1 | 9,000-23,000 | Local | transformers 4.57.6; cleanest mask on the test image, not real time |
 
 ### Which model for which machine?
 

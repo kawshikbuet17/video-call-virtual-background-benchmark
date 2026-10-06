@@ -46,6 +46,7 @@ MODELS = [
     "gregblur",               # MediaPipe selfie + gregblur pipeline (no-halo blur); --model in EXTRA_ARGS
     "linux-fake-background-webcam",  # MediaPipe selfie + lfbw mask recipe (threshold, dilate, box blur)
     "yolo-seg",               # Ultralytics YOLO26 nano, AGPL-3.0 license; --imgsz in EXTRA_ARGS
+    "ai-segmenter",           # RVM matte + YOLO11n object selection (GPL-3.0 + AGPL-3.0)
 ]
 
 # Extra options for a model's live.py (optional).

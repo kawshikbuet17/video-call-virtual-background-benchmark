@@ -1,0 +1,24 @@
+# Tested with Python 3.10 (local: 3.10.0 on Windows 11)
+# CPU only.
+# YOLO11 nano detector (Ultralytics, AGPL-3.0, see README). Ultralytics also installs
+# matplotlib, polars, psutil, requests, pyyaml, pillow and nvidia-ml-py (a small
+# GPU-status library; it does not install CUDA and is not used here).
+ultralytics==8.4.173
+# torch: on Windows and macOS the normal PyPI wheel is already CPU-only.
+# On Linux the PyPI wheel includes CUDA (several GB), so on Linux install with
+#   pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
+# which picks the CPU-only build "2.14.1+cpu" instead (the Dockerfile does this).
+torch==2.14.1
+torchvision==0.29.1  # needs torch 2.14; same CPU/Linux note as torch above
+# RVM runs as an ONNX file (same as the rvm/ folder).
+onnxruntime==1.23.2
+# BiRefNet (optional --matte birefnet): its code from Hugging Face needs these.
+# transformers below 5 and timm 1.0, as AI-Segmenter pins them. huggingface_hub
+# comes with transformers and is used by download_model.py --birefnet.
+transformers==4.57.6
+timm==1.0.30
+einops==0.8.2
+kornia==0.8.2
+numpy==2.2.6
+# Full OpenCV (with window support) for local runs. Ultralytics needs opencv-python.
+opencv-python==5.0.0.93
