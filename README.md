@@ -92,7 +92,7 @@ This sets up all of them (takes a while; run from the project root):
 Windows (PowerShell):
 
 ```powershell
-foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm", "sinet", "u2net", "deeplabv3-mobilenet", "bodypix", "fast-person-segmentation", "ncnn-portrait-segmentation", "fast-portrait-segmentation", "slimnet", "webinar-humanseg", "volcomix-virtual-background", "gregblur") {
+foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm", "sinet", "u2net", "deeplabv3-mobilenet", "bodypix", "fast-person-segmentation", "ncnn-portrait-segmentation", "fast-portrait-segmentation", "slimnet", "webinar-humanseg", "volcomix-virtual-background", "gregblur", "linux-fake-background-webcam") {
     python -m venv "$m\.venv"
     & "$m\.venv\Scripts\python.exe" -m pip install -r "$m\requirements.txt"
     & "$m\.venv\Scripts\python.exe" "$m\download_model.py"
@@ -102,7 +102,7 @@ foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapip
 Linux / macOS:
 
 ```bash
-for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm sinet u2net deeplabv3-mobilenet bodypix fast-person-segmentation ncnn-portrait-segmentation fast-portrait-segmentation slimnet webinar-humanseg volcomix-virtual-background gregblur; do
+for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm sinet u2net deeplabv3-mobilenet bodypix fast-person-segmentation ncnn-portrait-segmentation fast-portrait-segmentation slimnet webinar-humanseg volcomix-virtual-background gregblur linux-fake-background-webcam; do
     python3 -m venv "$m/.venv"
     # The extra index gives CPU-only PyTorch on Linux (sinet, u2net, deeplabv3-mobilenet, fast-portrait-segmentation); other packages still come from PyPI.
     "$m/.venv/bin/python" -m pip install -r "$m/requirements.txt" --extra-index-url https://download.pytorch.org/whl/cpu
@@ -157,9 +157,10 @@ Status, model size and min hardware are filled in as each model is done. Model s
 | 16 | Webinar HumanSeg (netesh3/webinar: PP-HumanSegV2 ONNX + temporal and edge steps) | `webinar-humanseg/` | Segmentation | 3.8 MB | No | TBD (about 34 FPS on video and webcam on a laptop i7 CPU; 88 FPS without the refine steps) | Yes (CPU), not tested yet | Model Apache-2.0; webinar repo has **no license** | In progress |
 | 17 | Volcomix virtual-background (Google Meet lite/full, ML Kit selfie + joint bilateral filter) | `volcomix-virtual-background/` | Segmentation | 0.4 MB per Meet model, 0.25 MB ML Kit (1.1 MB all three) | No | TBD (about 21-47 FPS on a laptop i7 CPU, depending on the model) | Yes (CPU), not tested yet | Code Apache-2.0; **Meet models: unclear** (Apache-2.0 at first, later Google ToS); ML Kit Apache-2.0 | In progress |
 | 18 | gregblur (MediaPipe selfie segmenter / multiclass + bilateral, temporal, no-halo blur) | `gregblur/` | Segmentation | 0.25 MB selfie segmenter, 16.4 MB multiclass | No | TBD (about 18-24 FPS with selfie-segmenter on a laptop i7 CPU; default multiclass about 4-5 FPS) | Yes (CPU), not tested yet | Apache-2.0 (gregblur, MediaPipe) | In progress |
-| 19 | YOLO segmentation (Ultralytics) | `yolo-seg/` | Segmentation | TBD | No (faster with GPU) | TBD | Planned | **AGPL-3.0** | Not started |
-| 20 | Apple Vision person segmentation | `apple-vision/` | Segmentation | TBD | No | Mac only | No (macOS only) | Apple OS API | Not started |
-| 21 | NVIDIA Maxine | `nvidia-maxine/` | Segmentation | TBD | Yes (NVIDIA RTX) | NVIDIA RTX GPU | TBD | NVIDIA SDK license | Not started |
+| 19 | Linux-Fake-Background-Webcam recipe (MediaPipe selfie landscape + threshold, dilate, box blur) | `linux-fake-background-webcam/` | Segmentation | 0.25 MB | No | TBD (about 53-68 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | **GPL-3.0** (lfbw; our code is our own); MediaPipe Apache-2.0 | In progress |
+| 20 | YOLO segmentation (Ultralytics) | `yolo-seg/` | Segmentation | TBD | No (faster with GPU) | TBD | Planned | **AGPL-3.0** | Not started |
+| 21 | Apple Vision person segmentation | `apple-vision/` | Segmentation | TBD | No | Mac only | No (macOS only) | Apple OS API | Not started |
+| 22 | NVIDIA Maxine | `nvidia-maxine/` | Segmentation | TBD | Yes (NVIDIA RTX) | NVIDIA RTX GPU | TBD | NVIDIA SDK license | Not started |
 
 GPL-3.0 and AGPL-3.0 are restrictive for closed-source commercial use. Read the
 license before using those models in a product.
@@ -184,6 +185,7 @@ license before using those models in a product.
 | Webinar HumanSeg | - | [netesh3/webinar](https://github.com/netesh3/webinar) (no license), [PR #242](https://github.com/netesh3/webinar/pull/242), [humanseg.ts](https://github.com/netesh3/webinar/blob/main/web/lib/humanseg.ts), model: [PP-HumanSeg](https://github.com/PaddlePaddle/PaddleSeg/tree/release/2.9/contrib/PP-HumanSeg) (Apache-2.0) |
 | Volcomix virtual-background | - | [Volcomix/virtual-background](https://github.com/Volcomix/virtual-background) (Apache-2.0), [live demo](https://volcomix.github.io/virtual-background), [Google: background features in Meet](https://research.google/blog/background-features-in-google-meet-powered-by-web-ml/), [ML Kit selfie segmentation](https://developers.google.com/ml-kit/vision/selfie-segmentation) |
 | gregblur | - | [gregce/gregblur](https://github.com/gregce/gregblur) (Apache-2.0), [live demo](https://gregce.github.io/gregblur/), [pipeline explained](https://github.com/gregce/gregblur/blob/main/docs/pipeline.md), [MediaPipe image segmenter](https://developers.google.com/edge/mediapipe/solutions/vision/image_segmenter) |
+| Linux-Fake-Background-Webcam | - | [fangfufu/Linux-Fake-Background-Webcam](https://github.com/fangfufu/Linux-Fake-Background-Webcam) (GPL-3.0), [lfbw.py](https://github.com/fangfufu/Linux-Fake-Background-Webcam/blob/master/lfbw/lfbw.py) |
 | YOLO segmentation | TODO | [ultralytics/ultralytics](https://github.com/ultralytics/ultralytics), [Segmentation docs](https://docs.ultralytics.com/tasks/segment/) |
 | Apple Vision | - | [VNGeneratePersonSegmentationRequest](https://developer.apple.com/documentation/vision/vngeneratepersonsegmentationrequest) |
 | NVIDIA Maxine | - | [NVIDIA Maxine](https://developer.nvidia.com/maxine) |
@@ -240,6 +242,8 @@ not needed), run each model 2-3 times, and report the typical value.
 | gregblur selfie-segmenter (+ pipeline) | 0.25 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 17.7-19.5 | 6.2 | Local | 150 frames, 2 runs |
 | gregblur selfie-multiclass (+ pipeline, gregblur's default) | 16.4 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 3.8-4.3 / 4.9 | 114-117 | Local | The model alone is the bottleneck |
 | gregblur selfie-segmenter (`--no-refine`) | 0.25 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 82 / 56 | 6.2-10 | Local | Raw mask, plain blur |
+| Linux-Fake-Background-Webcam recipe | 0.25 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 63.2-68.4 | 5.8-6.2 | Local | mediapipe 1.0.1, hard category mask + OpenCV post-processing |
+| Linux-Fake-Background-Webcam recipe | 0.25 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 53.3-53.4 | 7.4-8.1 | Local | 150 frames, 2 runs |
 
 ### Which model for which machine?
 

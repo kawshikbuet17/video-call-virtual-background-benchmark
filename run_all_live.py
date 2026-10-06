@@ -44,6 +44,7 @@ MODELS = [
     "webinar-humanseg",       # PP-HumanSegV2 + the netesh3/webinar temporal and edge steps
     "volcomix-virtual-background",  # Google Meet model (lite) + joint bilateral filter; --model in EXTRA_ARGS
     "gregblur",               # MediaPipe selfie + gregblur pipeline (no-halo blur); --model in EXTRA_ARGS
+    "linux-fake-background-webcam",  # MediaPipe selfie + lfbw mask recipe (threshold, dilate, box blur)
 ]
 
 # Extra options for a model's live.py (optional).
