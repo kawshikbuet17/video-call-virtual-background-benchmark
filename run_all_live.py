@@ -45,6 +45,7 @@ MODELS = [
     "volcomix-virtual-background",  # Google Meet model (lite) + joint bilateral filter; --model in EXTRA_ARGS
     "gregblur",               # MediaPipe selfie + gregblur pipeline (no-halo blur); --model in EXTRA_ARGS
     "linux-fake-background-webcam",  # MediaPipe selfie + lfbw mask recipe (threshold, dilate, box blur)
+    "yolo-seg",               # Ultralytics YOLO26 nano, AGPL-3.0 license; --imgsz in EXTRA_ARGS
 ]
 
 # Extra options for a model's live.py (optional).
@@ -54,6 +55,7 @@ EXTRA_ARGS = {
     "deeplabv3-mobilenet": ["--input-size", "256"],  # 520 (official) is about 4 FPS on CPU
     "volcomix-virtual-background": ["--model", "meet-lite"],  # or meet-full / mlkit
     "gregblur": ["--model", "selfie-segmenter"],  # gregblur's default selfie-multiclass is about 5 FPS on CPU
+    "yolo-seg": ["--imgsz", "320"],  # 640 (Ultralytics' default) is about 16 FPS on CPU
 }
 
 CAMERA = 0           # webcam index

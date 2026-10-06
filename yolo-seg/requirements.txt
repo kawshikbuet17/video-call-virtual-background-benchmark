@@ -1,0 +1,16 @@
+# Tested with Python 3.10 (local: 3.10.0 on Windows 11)
+# CPU only.
+# Ultralytics (AGPL-3.0, see README). It also installs matplotlib, polars, psutil,
+# requests, pyyaml, pillow and nvidia-ml-py (a small GPU-status library; it does not
+# install CUDA and is not used here).
+ultralytics==8.4.173
+# torch: on Windows and macOS the normal PyPI wheel is already CPU-only.
+# On Linux the PyPI wheel includes CUDA (several GB), so on Linux install with
+#   pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
+# which picks the CPU-only build "2.14.1+cpu" instead (the Dockerfile does this).
+torch==2.14.1
+torchvision==0.29.1  # needs torch 2.14; same CPU/Linux note as torch above
+numpy==2.2.6
+# Full OpenCV (with window support) for local runs. The Docker image uses the same
+# package so that the Linux webcam + display command works there too.
+opencv-python==5.0.0.93

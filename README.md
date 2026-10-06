@@ -92,7 +92,7 @@ This sets up all of them (takes a while; run from the project root):
 Windows (PowerShell):
 
 ```powershell
-foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm", "sinet", "u2net", "deeplabv3-mobilenet", "bodypix", "fast-person-segmentation", "ncnn-portrait-segmentation", "fast-portrait-segmentation", "slimnet", "webinar-humanseg", "volcomix-virtual-background", "gregblur", "linux-fake-background-webcam") {
+foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapipe-multiclass", "modnet", "rvm", "sinet", "u2net", "deeplabv3-mobilenet", "bodypix", "fast-person-segmentation", "ncnn-portrait-segmentation", "fast-portrait-segmentation", "slimnet", "webinar-humanseg", "volcomix-virtual-background", "gregblur", "linux-fake-background-webcam", "yolo-seg") {
     python -m venv "$m\.venv"
     & "$m\.venv\Scripts\python.exe" -m pip install -r "$m\requirements.txt"
     & "$m\.venv\Scripts\python.exe" "$m\download_model.py"
@@ -102,9 +102,9 @@ foreach ($m in "pp-humanseg-v1", "pp-humanseg-v2", "mediapipe-selfie", "mediapip
 Linux / macOS:
 
 ```bash
-for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm sinet u2net deeplabv3-mobilenet bodypix fast-person-segmentation ncnn-portrait-segmentation fast-portrait-segmentation slimnet webinar-humanseg volcomix-virtual-background gregblur linux-fake-background-webcam; do
+for m in pp-humanseg-v1 pp-humanseg-v2 mediapipe-selfie mediapipe-multiclass modnet rvm sinet u2net deeplabv3-mobilenet bodypix fast-person-segmentation ncnn-portrait-segmentation fast-portrait-segmentation slimnet webinar-humanseg volcomix-virtual-background gregblur linux-fake-background-webcam yolo-seg; do
     python3 -m venv "$m/.venv"
-    # The extra index gives CPU-only PyTorch on Linux (sinet, u2net, deeplabv3-mobilenet, fast-portrait-segmentation); other packages still come from PyPI.
+    # The extra index gives CPU-only PyTorch on Linux (sinet, u2net, deeplabv3-mobilenet, fast-portrait-segmentation, yolo-seg); other packages still come from PyPI.
     "$m/.venv/bin/python" -m pip install -r "$m/requirements.txt" --extra-index-url https://download.pytorch.org/whl/cpu
     "$m/.venv/bin/python" "$m/download_model.py"
 done
@@ -158,7 +158,7 @@ Status, model size and min hardware are filled in as each model is done. Model s
 | 17 | Volcomix virtual-background (Google Meet lite/full, ML Kit selfie + joint bilateral filter) | `volcomix-virtual-background/` | Segmentation | 0.4 MB per Meet model, 0.25 MB ML Kit (1.1 MB all three) | No | TBD (about 21-47 FPS on a laptop i7 CPU, depending on the model) | Yes (CPU), not tested yet | Code Apache-2.0; **Meet models: unclear** (Apache-2.0 at first, later Google ToS); ML Kit Apache-2.0 | In progress |
 | 18 | gregblur (MediaPipe selfie segmenter / multiclass + bilateral, temporal, no-halo blur) | `gregblur/` | Segmentation | 0.25 MB selfie segmenter, 16.4 MB multiclass | No | TBD (about 18-24 FPS with selfie-segmenter on a laptop i7 CPU; default multiclass about 4-5 FPS) | Yes (CPU), not tested yet | Apache-2.0 (gregblur, MediaPipe) | In progress |
 | 19 | Linux-Fake-Background-Webcam recipe (MediaPipe selfie landscape + threshold, dilate, box blur) | `linux-fake-background-webcam/` | Segmentation | 0.25 MB | No | TBD (about 53-68 FPS on a laptop i7 CPU) | Yes (CPU), not tested yet | **GPL-3.0** (lfbw; our code is our own); MediaPipe Apache-2.0 | In progress |
-| 20 | YOLO segmentation (Ultralytics) | `yolo-seg/` | Segmentation | TBD | No (faster with GPU) | TBD | Planned | **AGPL-3.0** | Not started |
+| 20 | YOLO segmentation (Ultralytics YOLO26 / YOLO11 / YOLOv8 nano) | `yolo-seg/` | Instance segmentation (COCO, person only) | 6.7 MB yolo26n-seg (6.2 / 7.1 MB for 11 / v8) | No (faster with GPU) | TBD (about 15-19 FPS at imgsz 640, 23-32 FPS at 320 on a laptop i7 CPU) | Yes (CPU), not tested yet | **AGPL-3.0** | In progress |
 | 21 | Apple Vision person segmentation | `apple-vision/` | Segmentation | TBD | No | Mac only | No (macOS only) | Apple OS API | Not started |
 | 22 | NVIDIA Maxine | `nvidia-maxine/` | Segmentation | TBD | Yes (NVIDIA RTX) | NVIDIA RTX GPU | TBD | NVIDIA SDK license | Not started |
 
@@ -186,7 +186,7 @@ license before using those models in a product.
 | Volcomix virtual-background | - | [Volcomix/virtual-background](https://github.com/Volcomix/virtual-background) (Apache-2.0), [live demo](https://volcomix.github.io/virtual-background), [Google: background features in Meet](https://research.google/blog/background-features-in-google-meet-powered-by-web-ml/), [ML Kit selfie segmentation](https://developers.google.com/ml-kit/vision/selfie-segmentation) |
 | gregblur | - | [gregce/gregblur](https://github.com/gregce/gregblur) (Apache-2.0), [live demo](https://gregce.github.io/gregblur/), [pipeline explained](https://github.com/gregce/gregblur/blob/main/docs/pipeline.md), [MediaPipe image segmenter](https://developers.google.com/edge/mediapipe/solutions/vision/image_segmenter) |
 | Linux-Fake-Background-Webcam | - | [fangfufu/Linux-Fake-Background-Webcam](https://github.com/fangfufu/Linux-Fake-Background-Webcam) (GPL-3.0), [lfbw.py](https://github.com/fangfufu/Linux-Fake-Background-Webcam/blob/master/lfbw/lfbw.py) |
-| YOLO segmentation | TODO | [ultralytics/ultralytics](https://github.com/ultralytics/ultralytics), [Segmentation docs](https://docs.ultralytics.com/tasks/segment/) |
+| YOLO segmentation | - | [ultralytics/ultralytics](https://github.com/ultralytics/ultralytics) (AGPL-3.0), [Segmentation docs](https://docs.ultralytics.com/tasks/segment/), [YOLO26](https://docs.ultralytics.com/models/yolo26/), [licensing](https://www.ultralytics.com/license) |
 | Apple Vision | - | [VNGeneratePersonSegmentationRequest](https://developer.apple.com/documentation/vision/vngeneratepersonsegmentationrequest) |
 | NVIDIA Maxine | - | [NVIDIA Maxine](https://developer.nvidia.com/maxine) |
 
@@ -244,6 +244,10 @@ not needed), run each model 2-3 times, and report the typical value.
 | gregblur selfie-segmenter (`--no-refine`) | 0.25 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 82 / 56 | 6.2-10 | Local | Raw mask, plain blur |
 | Linux-Fake-Background-Webcam recipe | 0.25 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 63.2-68.4 | 5.8-6.2 | Local | mediapipe 1.0.1, hard category mask + OpenCV post-processing |
 | Linux-Fake-Background-Webcam recipe | 0.25 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 53.3-53.4 | 7.4-8.1 | Local | 150 frames, 2 runs |
+| YOLO26n-seg (imgsz 640) | 6.7 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 13.7-18.5 | 47-66 | Local | ultralytics 8.4.173 + torch 2.14.1 (4 threads); inference = whole Ultralytics call; laptop was hot, wide range |
+| YOLO26n-seg (imgsz 640) | 6.7 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 16.1-16.8 | 53-55 | Local | 150 frames, 2 runs |
+| YOLO26n-seg (imgsz 320) | 6.7 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 22.9 / 32.1 | 35 / 25 | Local | Mask still clean on the test clip |
+| YOLO11n-seg / YOLOv8n-seg (imgsz 640) | 6.2 / 7.1 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 18.4 / 17.9 | 47.7 / 49.6 | Local | YOLO11 has holes at the shoulder patch on the test clip |
 
 ### Which model for which machine?
 
