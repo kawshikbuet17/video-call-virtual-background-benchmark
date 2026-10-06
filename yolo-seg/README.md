@@ -26,6 +26,23 @@ Ultralytics cuts each person's mask at 0.5, so the mask is hard (0 or 1, no soft
 edge). `--imgsz` sets the model input size: 640 is Ultralytics' default, 320 is
 about twice as fast.
 
+### `--soft-edge` (optional)
+
+YOLO's mask is hard and can have specks and holes. `--soft-edge` adds the clean-up
+from [Number-L/realtime-person-cutout](https://github.com/Number-L/realtime-person-cutout)
+(MIT; written here as our own code). For each person:
+
+1. Keep only the **largest connected piece** (drops loose specks).
+2. **Fill holes** inside the person. A hole that touches the picture border counts
+   as outside and stays.
+3. **Soft edge** with a distance transform: alpha is 0 at the edge and 1 from 2 px
+   inside. This also moves the edge in a little, so no light halo of the old
+   background shows.
+
+Then the mask is smoothed over time (70% this frame, 30% the previous one). Number-L
+does this per tracked person with ByteTrack (an extra package, `lap`); here it is done
+on the joined mask, which is the same when one person is in the picture.
+
 ## Requirements
 
 - Python 3.10 (tested with 3.10.0 on Windows 11)
@@ -56,6 +73,8 @@ python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
 .venv/bin/python download_model.py
 .venv/bin/python live.py --imgsz 320
+python live.py --imgsz 320 --soft-edge
+python live.py --imgsz 320 --main-person --soft-edge   # only you, soft edge
 ```
 
 After that, only the last line is needed. Use `run.py` instead of `live.py` for
@@ -133,6 +152,8 @@ Useful options for `run.py`:
 |--------|--------------|
 | `--weights NAME` | `yolo26n-seg` (default), `yolo11n-seg` or `yolov8n-seg` |
 | `--imgsz N` | Model input size, long side (default 640; 320 is faster) |
+| `--soft-edge` | Largest piece only, holes filled, 2 px soft edge, smoothed over time |
+| `--main-person` | Keep only the largest person (usually you, closest to the camera); people behind you are dropped |
 | `--save` | Save the result into `outputs/` (image: 4 PNG files, video/webcam: an MP4 of the side-by-side view) |
 | `--no-display` | No window. Saves the output and prints the average FPS and inference time |
 | `--background path` | Background image for replacement (default: `../assets/backgrounds/simple_room.png`) |
@@ -241,6 +262,21 @@ even at 320 (better than YOLO11, which had holes at the shoulder patch and the
 badge). The outline is hard and simplified, so hair edges look cut out rather
 than soft.
 
+With `--soft-edge` (same laptop, test video): about 5 ms more per person.
+
+| Setting | Without | With `--soft-edge` |
+|---------|---------|--------------------|
+| `--imgsz 640` | 18.8-18.9 FPS | 16.0-17.1 FPS |
+| `--imgsz 320` | 34.7 FPS | 26.3-27.0 FPS |
+| `--imgsz 320`, webcam | 31.7 FPS | 19.4 FPS |
+
+It filled YOLO11's hole at the shoulder patch, but not the holes at the badge,
+because they touch the bottom of the picture. The edge is a little softer. People in
+the background are still kept: YOLO finds every person, and the clean-up works per
+person. Use `--main-person` for that: it keeps only the largest person. On the webcam
+it removed a colleague sitting behind (tested). If someone comes closer to the camera
+than you, they become the largest and are kept instead.
+
 ## Common problems and fixes
 
 | Problem | Fix |
@@ -271,3 +307,4 @@ legal team first.
 - Segmentation docs: https://docs.ultralytics.com/tasks/segment/
 - YOLO26: https://docs.ultralytics.com/models/yolo26/
 - Model release: https://github.com/ultralytics/assets/releases/tag/v8.4.0
+- Soft-edge recipe: https://github.com/Number-L/realtime-person-cutout (MIT)

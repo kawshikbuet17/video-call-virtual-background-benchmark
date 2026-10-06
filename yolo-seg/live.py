@@ -8,6 +8,8 @@ One large window with the processed camera image, and a picker bar below it:
     python live.py --camera 1
     python live.py --imgsz 320          # faster, coarser mask
     python live.py --weights yolo11n-seg
+    python live.py --imgsz 320 --soft-edge   # soft edge, no specks or holes
+    python live.py --imgsz 320 --main-person # only the largest person (you), not people behind
 
 Choose an effect by clicking a tile, or press its number key (1-9).
 Other keys: s = save screenshot, q = quit.
@@ -43,6 +45,8 @@ def parse_args():
     p.add_argument("--weights", choices=model.WEIGHTS, default=model.WEIGHTS_NAME,
                    help="yolo26n-seg (default, newest), yolo11n-seg or yolov8n-seg")
     p.add_argument("--imgsz", type=int, default=model.IMG_SIZE, help="model input size (default 640; 320 is faster)")
+    p.add_argument("--soft-edge", action="store_true", help="largest piece, filled holes, soft edge, smoothed over time")
+    p.add_argument("--main-person", action="store_true", help="keep only the largest person (usually you)")
     return p.parse_args()
 
 
@@ -114,6 +118,8 @@ def main():
 
     model.WEIGHTS_NAME = args.weights
     model.IMG_SIZE = args.imgsz
+    model.SOFT_EDGE = args.soft_edge
+    model.MAIN_PERSON = args.main_person
     print("Loading model...")
     predictor = model.load_model()
 

@@ -11,6 +11,8 @@ Examples:
     python run.py                                            # webcam, yolo26n-seg
     python run.py --weights yolo11n-seg                      # older YOLO11
     python run.py --imgsz 320                                # faster, coarser mask
+    python run.py --soft-edge                                # soft edge, no specks or holes
+    python run.py --main-person                              # keep only the largest person
     python run.py --image ../assets/samples/person_portrait.jpg
     python run.py --video my_clip.mp4 --save
 
@@ -35,11 +37,17 @@ IMG_SIZE = 640                 # long side of the model input (Ultralytics' defa
 CONF = 0.25                    # minimum confidence for a person (Ultralytics' default)
 PERSON_CLASS = 0               # "person" in the COCO class list
 NUM_THREADS = 4                # PyTorch CPU threads
+# --soft-edge: the recipe of github.com/Number-L/realtime-person-cutout (MIT), our own code.
+SOFT_EDGE = False
+MAIN_PERSON = False            # --main-person: keep only the largest person (usually you)
+FEATHER = 2.0                  # soft edge width in pixels (also how far the edge moves in)
+EMA = 0.7                      # mask = 70% this frame + 30% the previous mask
 PANEL_HEIGHT = 240  # height of each panel in the side-by-side view
 
 
 def model_title():
-    return f"YOLO {WEIGHTS_NAME} ({IMG_SIZE})"
+    extras = (" soft edge" if SOFT_EDGE else "") + (" main person" if MAIN_PERSON else "")
+    return f"YOLO {WEIGHTS_NAME} ({IMG_SIZE}){extras}"
 
 
 def parse_args():
@@ -55,6 +63,10 @@ def parse_args():
                    help="yolo26n-seg (default, newest), yolo11n-seg or yolov8n-seg")
     p.add_argument("--imgsz", type=int, default=IMG_SIZE,
                    help="model input size, long side (default 640; 320 is faster but coarser)")
+    p.add_argument("--soft-edge", action="store_true",
+                   help="per person: keep the largest piece, fill holes, 2 px soft edge; smooth over time")
+    p.add_argument("--main-person", action="store_true",
+                   help="keep only the largest person (the one closest to the camera), not people behind")
     return p.parse_args()
 
 
@@ -68,6 +80,7 @@ def load_model():
 
     # Warm-up run so the first real frame is not slower than the rest.
     run_inference(model, preprocess(np.zeros((480, 640, 3), np.uint8)))
+    reset_temporal()
     return model
 
 
@@ -88,16 +101,61 @@ def run_inference(model, frame_bgr):
 
 
 # ---------------------------------------------------------------- postprocess
+def soft_edge(mask):
+    """One person's hard 0/1 mask -> clean mask with a soft edge."""
+    m = (mask > 0.5).astype(np.uint8)
+    if not m.any():
+        return np.zeros(m.shape, np.float32)
+    # 1. Keep only the largest connected piece: loose specks (a bit of the background
+    #    the model thought was this person) are dropped.
+    count, labels, stats, _ = cv2.connectedComponentsWithStats(m, connectivity=8)
+    if count > 2:
+        largest = 1 + int(np.argmax(stats[1:, cv2.CC_STAT_AREA]))
+        m = (labels == largest).astype(np.uint8)
+    # 2. Fill holes: flood-fill the background from a corner; whatever background
+    #    it cannot reach is a hole inside the person.
+    h, w = m.shape
+    outside = m.copy()
+    cv2.floodFill(outside, np.zeros((h + 2, w + 2), np.uint8), (0, 0), 1)
+    m = m | (outside == 0).astype(np.uint8)
+    # 3. Soft edge: each pixel's distance to the edge, so alpha is 0 at the edge and
+    #    1 from FEATHER px inside. This also moves the edge in a little, which keeps
+    #    background colour (a light halo) out of the cut-out.
+    distance = cv2.distanceTransform(m, cv2.DIST_L2, 5)
+    return np.clip(distance / FEATHER, 0.0, 1.0).astype(np.float32)
+
+
+# For --soft-edge: the previous mask, kept between frames.
+_prev = {"alpha": None}
+
+
+def reset_temporal():
+    _prev["alpha"] = None
+
+
 def postprocess(result, frame_shape):
     h, w = frame_shape[:2]
     if result.masks is None:  # nobody found
-        return np.zeros((h, w), np.float32)
-    # One 0/1 mask per person. Ultralytics already cut each one at 0.5, so the
-    # edges are hard. Join all people: a pixel is "person" if any mask says so.
-    masks = result.masks.data.cpu().numpy()          # shape (people, H, W)
-    alpha = masks.max(axis=0).astype(np.float32)
-    if alpha.shape != (h, w):
-        alpha = cv2.resize(alpha, (w, h), interpolation=cv2.INTER_LINEAR)
+        alpha = np.zeros((h, w), np.float32)
+    else:
+        # One 0/1 mask per person. Ultralytics already cut each one at 0.5, so the
+        # edges are hard. Join all people: a pixel is "person" if any mask says so.
+        masks = result.masks.data.cpu().numpy()      # shape (people, H, W)
+        if MAIN_PERSON:
+            # The person closest to the camera covers the most pixels. People
+            # further back (colleagues walking past) are dropped.
+            masks = masks[[int(np.argmax(masks.reshape(len(masks), -1).sum(axis=1)))]]
+        if SOFT_EDGE:
+            masks = [soft_edge(m) for m in masks]
+        alpha = np.max(masks, axis=0).astype(np.float32)
+        if alpha.shape != (h, w):
+            alpha = cv2.resize(alpha, (w, h), interpolation=cv2.INTER_LINEAR)
+    if SOFT_EDGE:
+        # Smooth over time (less flicker). Number-L does this per tracked person
+        # (ByteTrack); here it is done on the joined mask, the same for one person.
+        if _prev["alpha"] is not None and _prev["alpha"].shape == alpha.shape:
+            alpha = cv2.addWeighted(alpha, EMA, _prev["alpha"], 1.0 - EMA, 0.0)
+        _prev["alpha"] = alpha
     return np.clip(alpha, 0.0, 1.0)  # float mask in [0, 1], same size as the frame
 
 
@@ -151,6 +209,7 @@ def process_frame(predictor, frame, background):
 
 
 def run_image(args, predictor, background):
+    reset_temporal()  # a single image has no previous frame
     frame = cv2.imread(args.image)
     if frame is None:
         raise SystemExit(f"Could not read image: {args.image}")
@@ -183,6 +242,7 @@ def run_image(args, predictor, background):
 
 def run_stream(args, predictor, background):
     """Webcam or video file."""
+    reset_temporal()
     source = args.video if args.video else args.camera
     cap = cv2.VideoCapture(source)
     if not cap.isOpened():
@@ -256,7 +316,9 @@ def main():
     if background is None:
         raise SystemExit(f"Could not read background image: {args.background}")
 
-    global WEIGHTS_NAME, IMG_SIZE
+    global WEIGHTS_NAME, IMG_SIZE, SOFT_EDGE, MAIN_PERSON
+    SOFT_EDGE = args.soft_edge
+    MAIN_PERSON = args.main_person
     WEIGHTS_NAME = args.weights
     IMG_SIZE = args.imgsz
     print("Loading model...")

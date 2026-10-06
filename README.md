@@ -250,6 +250,8 @@ not needed), run each model 2-3 times, and report the typical value.
 | YOLO26n-seg (imgsz 640) | 6.7 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 16.1-16.8 | 53-55 | Local | 150 frames, 2 runs |
 | YOLO26n-seg (imgsz 320) | 6.7 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video / webcam) | 22.9 / 32.1 | 35 / 25 | Local | Mask still clean on the test clip |
 | YOLO11n-seg / YOLOv8n-seg (imgsz 640) | 6.2 / 7.1 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 18.4 / 17.9 | 47.7 / 49.6 | Local | YOLO11 has holes at the shoulder patch on the test clip |
+| YOLO26n-seg `--soft-edge` (imgsz 640 / 320) | 6.7 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 16.0-17.1 / 26.3-27.0 | 46-49 / 24-25 | Local | Largest piece, filled holes, 2 px distance-transform edge, EMA 0.7 (Number-L recipe); about 5 ms per person |
+| YOLO26n-seg `--soft-edge` (imgsz 320) | 6.7 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (webcam) | 19.4 | 25.1 | Local | 150 frames; without soft edge 31.7 FPS in the same session |
 | AI-Segmenter RVM + YOLO11n (default) | 21 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 12.3-14.6 | 60-66 | Local | YOLO every 3rd frame; CPU about half busy with other apps during the test |
 | AI-Segmenter RVM alone (`--no-yolo`) | 15 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) | 25.5-26.3 | 25-29 | Local | RVM ONNX, downsample 0.25 |
 | AI-Segmenter BiRefNet (512) | 445 MB | CPU: Intel i7-13620H (no GPU used) | 16 GB | 640x480 (video) / 960x1200 (image) | 0.1 | 9,000-23,000 | Local | transformers 4.57.6; cleanest mask on the test image, not real time |
